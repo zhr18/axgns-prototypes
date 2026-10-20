@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sign in · AX GANES</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* AX GANES V.2 · Authentication & Onboarding (flow from ganes-ax, Home v2.1 design system) */
+:root{--a:#305CFF;--a08:rgba(48,92,255,.08);--t1:#101828;--t2:#344054;--t3:#475467;--t4:#5D6676;--t5:#98A2B3;--bd:#E6E8EC;--bd3:#DADDE3;--bg:#F6F7F9;--red:#D92D20;--red2:#B42318;--ok:#067647}
+*{box-sizing:border-box}html,body{margin:0;height:100%}
+body{background:#E4E6EB;font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:var(--t1);overflow:hidden}
+button,input,select,textarea{font-family:inherit}button{cursor:pointer}[hidden]{display:none!important}
+#wrap{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}
+#tab{width:1180px;height:820px;flex:none;border-radius:24px;overflow:hidden;background:var(--bg);box-shadow:0 1px 3px rgba(0,0,0,.12),0 20px 60px rgba(16,24,40,.12);transform-origin:center;display:flex;flex-direction:column;position:relative}
+body.shot{background:var(--bg)}body.shot #wrap{position:static}body.shot #tab{transform:none!important;border-radius:0;box-shadow:none}
+.logo{width:44px;height:44px;border-radius:12px;background:var(--a);color:#fff;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;padding-bottom:4px}
+.brand{display:flex;align-items:center;gap:12px}.brand b{display:block;font-size:17px}.brand small{display:block;margin-top:2px;font-size:11px;font-weight:600;letter-spacing:.08em;color:var(--t4)}
+.au{flex:1;display:flex;align-items:center;justify-content:center}
+.card{width:440px;background:#fff;border:1px solid var(--bd);border-radius:20px;padding:32px 34px;box-shadow:0 12px 32px rgba(16,24,40,.08)}
+.card .brand{margin-bottom:22px}
+h1{margin:0;font-size:24px;line-height:1.3}.sub{margin:6px 0 0;font-size:15px;color:var(--t3);line-height:1.5}
+label{display:block;margin-top:16px;font-size:13px;font-weight:600;color:var(--t2)}
+.in{width:100%;height:46px;margin-top:6px;padding:0 14px;border:1px solid var(--bd3);border-radius:12px;font-size:15px;color:var(--t1);background:#fff;outline:0}
+.in:focus{border-color:var(--a);box-shadow:0 0 0 4px var(--a08)}.in.bad{border-color:var(--red)}
+textarea.in{height:auto;min-height:86px;padding:10px 14px;resize:vertical;line-height:1.5}
+.pw{position:relative}.pw .eye{position:absolute;right:6px;top:12px;height:34px;padding:0 10px;border:0;background:none;color:var(--t3);font-size:13px;font-weight:600;border-radius:8px}
+.err{margin:6px 0 0;font-size:13px;color:var(--red2);min-height:0}
+.row{display:flex;align-items:center;justify-content:space-between;margin-top:10px}
+.lk{border:0;background:none;padding:0;color:var(--a);font-size:14px;font-weight:600}
+.pri{width:100%;height:48px;margin-top:20px;border:0;border-radius:12px;background:var(--a);color:#fff;font-size:16px;font-weight:600}
+.pri:hover{background:#2449D8}.pri:disabled{opacity:.45;cursor:default}
+.gh{width:100%;height:46px;margin-top:10px;border:1px solid var(--bd3);border-radius:12px;background:#fff;color:var(--t1);font-size:15px;font-weight:600}
+.or{display:flex;align-items:center;gap:10px;margin-top:16px;font-size:12px;color:var(--t5)}.or:before,.or:after{content:"";flex:1;height:1px;background:var(--bd)}
+.foot{margin-top:18px;text-align:center;font-size:14px;color:var(--t3)}
+.demo{margin-top:16px;padding:10px 12px;border-radius:10px;background:var(--bg);font-size:12.5px;color:var(--t3);line-height:1.5}
+.rules{list-style:none;margin:10px 0 0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:4px 12px;font-size:12.5px;color:var(--t4)}
+.rules li:before{content:"○ ";}.rules li.ok{color:var(--ok)}.rules li.ok:before{content:"✓ "}
+.meter{display:flex;gap:4px;margin-top:8px}.meter i{flex:1;height:4px;border-radius:2px;background:var(--bd)}.meter i.on{background:var(--ok)}
+.code{display:flex;gap:10px;margin-top:18px}.code input{width:52px;height:58px;text-align:center;font-size:22px;font-weight:700;border:1px solid var(--bd3);border-radius:12px;outline:0}
+.code input:focus{border-color:var(--a);box-shadow:0 0 0 4px var(--a08)}
+.toast{position:absolute;top:24px;left:50%;transform:translateX(-50%);background:var(--t1);color:#fff;font-size:14px;padding:12px 18px;border-radius:12px;z-index:9}
+/* onboarding */
+.ob{flex:1;display:flex;flex-direction:column;min-height:0}
+.ob-hd{height:88px;flex:none;padding:22px 40px 0;display:flex;align-items:center;justify-content:space-between}
+.steps{display:flex;gap:6px;list-style:none;margin:0;padding:0}
+.steps li{display:flex;align-items:center;gap:8px;height:36px;padding:0 12px;border-radius:18px;font-size:13px;font-weight:600;color:var(--t5);background:#fff;border:1px solid var(--bd)}
+.steps li i{width:20px;height:20px;border-radius:10px;border:2px solid #C9CED6;font-style:normal;font-size:11px;display:flex;align-items:center;justify-content:center}
+.steps li.cur{color:var(--t1);border-color:var(--a)}.steps li.cur i{border-color:var(--a);color:var(--a)}
+.steps li.done{color:var(--t3)}.steps li.done i{background:var(--a);border-color:var(--a);color:#fff}
+.ob-bd{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:20px;padding:12px 40px 0}
+.pane{background:#fff;border:1px solid var(--bd);border-radius:20px;padding:26px 28px;overflow:auto}
+.pane h2{margin:0;font-size:22px}.pane>p{margin:6px 0 0;font-size:14.5px;color:var(--t3)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:0 16px}
+.seg{display:flex;background:var(--bg);border-radius:12px;padding:4px;margin-top:16px}
+.seg button{flex:1;height:38px;border:0;border-radius:9px;background:none;font-size:14px;font-weight:600;color:var(--t4)}
+.seg button[aria-pressed=true]{background:#fff;color:var(--t1);box-shadow:0 1px 2px rgba(16,24,40,.08)}
+.pc{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+.pc button{padding:14px;border:1px solid var(--bd);border-radius:14px;background:#fff;text-align:left}
+.pc button[aria-pressed=true]{border-color:var(--a);background:var(--a08)}
+.pc b{display:block;font-size:15px}.pc small{display:block;margin-top:4px;font-size:12px;color:var(--t4);line-height:1.4}
+.need{font-size:11.5px;font-weight:700;color:#B54708;margin-left:6px}
+.sum h3{margin:0 0 10px;font-size:13px;font-weight:700;letter-spacing:.06em;color:var(--t4);text-transform:uppercase}
+.kv div{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--bd);font-size:14px}.kv span{color:var(--t4)}.kv b{text-align:right;font-weight:600}
+.kv em{font-style:normal;font-weight:600;color:#B54708}
+.chat{margin-top:6px;border:1px solid var(--bd);border-radius:16px;overflow:hidden}
+.chat .h{display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--a);color:#fff;font-size:14px;font-weight:600}
+.chat .h i{width:30px;height:30px;border-radius:15px;background:rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;font-style:normal}
+.chat p{margin:12px;padding:10px 12px;border-radius:12px;background:var(--bg);font-size:13.5px;line-height:1.5}
+.sw{display:flex;gap:8px;margin-top:10px}.sw i{width:36px;height:36px;border-radius:10px;border:1px solid var(--bd)}
+.ob-ft{flex:none;margin:16px 40px 24px;padding:14px 16px;display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--bd);border-radius:16px}
+.ob-ft .sp{flex:1}.ob-ft .pri{width:auto;margin:0;padding:0 24px;height:46px}.ob-ft .gh{width:auto;margin:0;padding:0 18px}
+.ob-ft small{font-size:13px;color:var(--t4)}
+</style>
+</head>
+<body>
+<div id="wrap"><div id="tab"></div></div>
+<script>
+/* Flow (same as ganes-ax): Login · Sign Up (Owner) · Verify email (6-digit) · Onboarding 5 steps · Launch → Home */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const DEMO={email:'andi@gelorasport.id',pw:'Gelora2026!',code:'123456'};
+const IND=['Retail','Beauty & Cosmetics','Grocery & Supermarket','Gadget & Electronics','Financial Services (Bank & Securities)'];
+const PERS=[['Mira','Friendly, guides new shoppers.'],['Lila','Playful, for a young audience.'],['Dimas','Technical and detailed.']];
+let V='login',E={},T='',tt=0,cd=0,cdI=0,CODE=['','','','','',''];
+let OB={step:0,store:'',web:'',cur:'IDR',ind:'',mode:'crawl',crawled:false,prof:{},asst:'Mira',tpl:'template',pers:'Mira',welcome:'Hi! I’m Mira from Gelora Sport. Looking for shoes, jerseys or sports gear?',scan:false};
+const SU={name:'',email:'',pw:'',pw2:''};
+function toast(m){T=m;render();clearTimeout(tt);tt=setTimeout(()=>{T='';render()},2600)}
+const rules=p=>[['12+ characters',p.length>=12],['Upper & lower case',/[a-z]/.test(p)&&/[A-Z]/.test(p)],['A number',/\d/.test(p)],['A symbol',/[^A-Za-z0-9]/.test(p)]];
+const brand=`<div class="brand"><span class="logo" aria-hidden="true">g</span><span><b>AX · GANES</b><small>AI WORKSPACE</small></span></div>`;
+const er=k=>E[k]?`<p class="err" role="alert">${E[k]}</p>`:'';
+function login(){return`<div class="au"><form class="card" id="f-login" novalidate>${brand}
+ <h1>Sign in</h1><p class="sub">Welcome back. Sign in to your workspace.</p>
+ <label for="le">Email</label><input class="in${E.login?' bad':''}" id="le" type="email" autocomplete="email" value="${esc(E.le||'')}">
+ <label for="lp">Password</label><div class="pw"><input class="in${E.login?' bad':''}" id="lp" type="password" autocomplete="current-password"><button class="eye" type="button" data-a="eye">Show</button></div>
+ ${er('login')}
+ <div class="row"><span></span><button class="lk" type="button" data-a="forgot">Forgot password?</button></div>
+ <button class="pri" type="submit">Sign In</button>
+ <div class="or">or</div><button class="gh" type="button" data-a="google">Continue with Google</button>
+ <p class="foot">New to GANES? <button class="lk" type="button" data-go="signup">Create an account</button></p>
+ <div class="demo">Demo account · ${DEMO.email} · ${DEMO.pw}</div></form></div>`}
+function pwParts(){const r=rules(SU.pw),n=r.filter(x=>x[1]).length;return`<div class="meter" aria-hidden="true">${r.map((_,i)=>`<i class="${i<n?'on':''}"></i>`).join('')}</div><ul class="rules">${r.map(([l,ok])=>`<li class="${ok?'ok':''}">${l}</li>`).join('')}</ul>`}
+function signup(){return`<div class="au"><form class="card" id="f-signup" novalidate>${brand}
+ <h1>Create your account</h1><p class="sub">Only the store Owner signs up. Your team is invited later.</p>
+ <label for="sn">Name</label><input class="in${E.name?' bad':''}" id="sn" data-su="name" value="${esc(SU.name)}" autocomplete="name">${er('name')}
+ <label for="se">Email</label><input class="in${E.email?' bad':''}" id="se" data-su="email" type="email" value="${esc(SU.email)}" autocomplete="email">${er('email')}
+ <label for="sp">Password</label><input class="in${E.pw?' bad':''}" id="sp" data-su="pw" type="password" value="${esc(SU.pw)}" autocomplete="new-password">
+ <div id="pwx">${pwParts()}</div>${er('pw')}
+ <label for="sp2">Confirm password</label><input class="in${E.pw2?' bad':''}" id="sp2" data-su="pw2" type="password" value="${esc(SU.pw2)}" autocomplete="new-password">${er('pw2')}
+ <button class="pri" type="submit">Create account</button>
+ <p class="foot">Already have an account? <button class="lk" type="button" data-go="login">Sign in</button></p></form></div>`}
+function verify(){return`<div class="au"><form class="card" id="f-verify" novalidate>${brand}
+ <h1>Verify your email</h1><p class="sub">We sent a 6-digit verification code to <b>${esc(SU.email||DEMO.email)}</b>.</p>
+ <div class="code">${[0,1,2,3,4,5].map(i=>`<input id="ci${i}" inputmode="numeric" maxlength="6" autocomplete="one-time-code" data-ci="${i}" value="${CODE[i]}" aria-label="Digit ${i+1}">`).join('')}</div>${er('code')}
+ <button class="pri" type="submit">Continue</button>
+ <div class="row"><button class="lk" type="button" data-go="login">Back to Sign In</button><span id="rsd">${rsd()}</span></div>
+ <div class="demo">Demo code · ${DEMO.code}</div></form></div>`}
+const rsd=()=>cd>0?`<span style="font-size:13px;color:var(--t4)">Resend in 00:${String(cd).padStart(2,'0')}</span>`:`<button class="lk" type="button" data-a="resend">Resend code</button>`;
+function startCd(){clearInterval(cdI);cd=60;cdI=setInterval(()=>{cd--;if(cd<=0)clearInterval(cdI);const el=document.getElementById('rsd');if(el&&V==='verify')el.innerHTML=rsd()},1000)}
+/* ---------- onboarding ---------- */
+const OBS=['Store Info','Company Profile','Persona','Theme','Finish'];
+const PROF=[['desc','Description','Sports shoes, jerseys and sports gear in South Jakarta.'],['addr','Address','Jl. Fatmawati, South Jakarta'],['ret','Return policy','Returns within 30 days, label attached, original box.'],['days','Operating days','Monday – Saturday'],['closed','Closed days','Sunday, public holidays'],['hours','Hours','09:00 – 20:00'],['phone','Phone',''],['mail','Email','hello@gelorasport.id'],['extra','Extra info','']];
+function obPane(){
+ const s=OB.step;
+ if(s===0)return`<h2>Store Info</h2><p>Tell us about your store.</p>
+  <label for="o-n">Store name *</label><input class="in${E.ob?' bad':''}" id="o-n" data-ob="store" value="${esc(OB.store)}">
+  <label for="o-w">Store website</label><input class="in" id="o-w" data-ob="web" placeholder="https://" value="${esc(OB.web)}">
+  <div class="two"><div><label for="o-c">Currency</label><select class="in" id="o-c" data-ob="cur"><option>IDR</option><option>USD</option></select></div>
+  <div><label for="o-i">Industry *</label><select class="in${E.ob&&!OB.ind?' bad':''}" id="o-i" data-ob="ind"><option value="">Choose…</option>${IND.map(i=>`<option${OB.ind===i?' selected':''}>${i}</option>`).join('')}</select></div></div>${er('ob')}`;
+ if(s===1)return`<h2>Company Profile</h2><p>Ganes uses this to answer customers (hours, contact, returns).</p>
+  <div class="seg" role="group"><button data-mode="crawl" aria-pressed="${OB.mode==='crawl'}" type="button">Crawl from website</button><button data-mode="manual" aria-pressed="${OB.mode==='manual'}" type="button">Manual input</button></div>
+  ${OB.mode==='crawl'?`<label for="o-u">Info page URL</label><div style="display:flex;gap:8px"><input class="in" id="o-u" value="${esc(OB.web||'https://gelorasport.id')}"><button class="gh" style="width:auto;margin-top:6px;padding:0 16px" type="button" data-a="crawl">${OB.crawled?'Crawl again':'Crawl website'}</button></div>`:''}
+  ${(OB.mode==='manual'||OB.crawled)?`<div class="two">${PROF.map(([k,l])=>`<div><label for="p-${k}">${l}${OB.prof[k]?'':'<span class="need">needs input</span>'}</label><input class="in" id="p-${k}" data-pf="${k}" value="${esc(OB.prof[k]||'')}"></div>`).join('')}</div>`:''}`;
+ if(s===2)return`<h2>Persona</h2><p>How your assistant talks to customers.</p>
+  <label for="o-a">Assistant name</label><input class="in" id="o-a" data-ob="asst" value="${esc(OB.asst)}">
+  <div class="seg" role="group"><button data-tpl="template" aria-pressed="${OB.tpl==='template'}" type="button">Bot template</button><button data-tpl="custom" aria-pressed="${OB.tpl==='custom'}" type="button">Custom bot</button></div>
+  ${OB.tpl==='template'?`<div class="pc">${PERS.map(([n,d])=>`<button data-pers="${n}" aria-pressed="${OB.pers===n}" type="button"><b>${n}</b><small>${d}</small></button>`).join('')}</div>`:''}
+  <label for="o-wm">Welcome message</label><textarea class="in" id="o-wm" data-ob="welcome">${esc(OB.welcome)}</textarea>`;
+ if(s===3)return`<h2>Theme</h2><p>Brand colours for the chat widget.</p>
+  <label for="o-tw">Website URL</label><div style="display:flex;gap:8px"><input class="in" id="o-tw" value="${esc(OB.web||'https://gelorasport.id')}"><button class="gh" style="width:auto;margin-top:6px;padding:0 16px" type="button" data-a="scan">Scan website</button></div>
+  ${OB.scan?`<div class="kv" style="margin-top:14px"><div><span>Website</span><b>${esc(OB.web||'gelorasport.id')}</b></div><div><span>Colors</span><b><span class="sw" style="justify-content:flex-end;margin:0"><i style="background:#0E7C3A"></i><i style="background:#F2B705"></i><i style="background:#101828"></i></span></b></div><div><span>Logo</span><b>Not found</b></div></div>`:`<p style="margin-top:14px;font-size:13.5px;color:var(--t4)">You can continue without scanning. Theme can be set later in Settings › Appearance.</p>`}`;
+ return`<h2>Finish</h2><p>Review your setup. Items not ready become your first to-do steps on Home.</p>
+  <div class="kv" style="margin-top:14px"><div><span>Store</span><b>${esc(OB.store||'—')}</b></div><div><span>Website</span><b>${esc(OB.web||'—')}</b></div><div><span>Industry</span><b>${esc(OB.ind||'—')}</b></div>
+  <div><span>Products</span><em>Not set</em></div><div><span>Knowledge</span><em>No sources yet</em></div><div><span>Persona</span><b>${esc(OB.tpl==='template'?OB.pers:'Custom')}</b></div><div><span>Assistant name</span><b>${esc(OB.asst)}</b></div></div>`;
+}
+function obSide(){
+ if(OB.step===2)return`<div class="sum"><h3>Live preview</h3><div class="chat"><div class="h"><i>${esc((OB.asst||'?')[0])}</i>${esc(OB.asst||'Assistant')}</div><p>${esc(OB.welcome)}</p></div></div>`;
+ return`<div class="sum"><h3>Setup summary</h3><div class="kv"><div><span>Store name</span><b>${esc(OB.store||'—')}</b></div><div><span>Website</span><b>${esc(OB.web||'—')}</b></div><div><span>Currency</span><b>${OB.cur}</b></div><div><span>Industry</span><b>${esc(OB.ind||'—')}</b></div></div></div>`;
+}
+function onboard(){const s=OB.step;return`<div class="ob"><div class="ob-hd">${brand}<ol class="steps" aria-label="Setup progress">${OBS.map((l,i)=>`<li class="${i<s?'done':i===s?'cur':''}"><i>${i<s?'✓':i+1}</i>${l}</li>`).join('')}</ol></div>
+ <div class="ob-bd"><section class="pane">${obPane()}</section><aside class="pane">${obSide()}</aside></div>
+ <div class="ob-ft">${s?`<button class="gh" type="button" data-a="obback">Back</button>`:''}<small>Step ${s+1} of 5 · all steps required</small><span class="sp"></span><button class="pri" type="button" data-a="obnext">${s===4?'Launch workspace':'Next'}</button></div></div>`}
+function render(){
+ const ae=document.activeElement,id=ae&&ae.id,pos=ae&&ae.selectionStart;
+ $('#tab').innerHTML=(V==='login'?login():V==='signup'?signup():V==='verify'?verify():onboard())+(T?`<div class="toast" role="status">${esc(T)}</div>`:'');
+ if(id){const el=document.getElementById(id);if(el){el.focus();try{el.setSelectionRange(pos,pos)}catch(e){}}}
+}
+function go(v){V=v;E={};if(v==='verify')CODE=['','','','','',''];render();if(v==='verify')startCd()}
+/* ---------- events ---------- */
+document.addEventListener('submit',e=>{e.preventDefault();const f=e.target.id;
+ if(f==='f-login'){const em=$('#le').value.trim(),pw=$('#lp').value;E={le:em};
+   if(!em||!pw){E.login='Enter your email and password.';return render()}
+   if(em.toLowerCase()!==DEMO.email||pw!==DEMO.pw){E.login='Wrong email or password.';return render()}
+   try{localStorage.removeItem('ax24-state')}catch(x){}location.href='index.html?login=1'}
+ if(f==='f-signup'){E={};
+   if(!SU.name.trim())E.name='Enter your name.';
+   if(!/^\S+@\S+\.\S+$/.test(SU.email))E.email='Enter a valid email.';else if(SU.email.toLowerCase()===DEMO.email)E.email='This email is already registered. Log in?';
+   if(rules(SU.pw).some(r=>!r[1]))E.pw='Password doesn’t meet all rules.';
+   if(SU.pw!==SU.pw2)E.pw2='Passwords must match.';
+   if(Object.keys(E).length)return render();go('verify')}
+ if(f==='f-verify'){const c=CODE.join('');
+   if(c.length<6){E={code:'Enter all 6 digits.'};return render()}
+   if(c!==DEMO.code){E={code:'The code doesn’t match.'};return render()}
+   CODE=['','','','','',''];OB.store='';go('onboard')}
+});
+document.addEventListener('click',e=>{const b=e.target.closest('[data-go],[data-a],[data-mode],[data-tpl],[data-pers]');if(!b)return;
+ if(b.dataset.go)return go(b.dataset.go);
+ if(b.dataset.mode){OB.mode=b.dataset.mode;return render()}
+ if(b.dataset.tpl){OB.tpl=b.dataset.tpl;return render()}
+ if(b.dataset.pers){OB.pers=b.dataset.pers;OB.asst=b.dataset.pers;OB.welcome=`Hi! I’m ${b.dataset.pers} from ${OB.store||'our store'}. How can I help?`;return render()}
+ const a=b.dataset.a;
+ if(a==='eye'){const p=$('#lp');p.type=p.type==='password'?'text':'password';b.textContent=p.type==='password'?'Show':'Hide'}
+ if(a==='forgot')toast('Enter your email → reset link sent → set a new password → Sign in.');
+ if(a==='google')toast('Google sign-in: same checks as Sign In (prototype).');
+ if(a==='resend'){toast('New code sent.');startCd()}
+ if(a==='crawl'){OB.crawled=true;PROF.forEach(([k,,v])=>{if(v)OB.prof[k]=v});toast('Website read. Check the fields.')}
+ if(a==='scan'){OB.scan=true;render()}
+ if(a==='obback'){OB.step--;render()}
+ if(a==='obnext'){
+   if(OB.step===0&&(!OB.store.trim()||!OB.ind)){E={ob:'Fill in store name and industry to continue.'};return render()}
+   E={};if(OB.step<4){OB.step++;return render()}
+   try{localStorage.removeItem('ax24-state')}catch(x){}location.href='index.html?new=1'}
+});
+document.addEventListener('input',e=>{const t=e.target;
+ if(t.dataset.su){SU[t.dataset.su]=t.value;if(t.dataset.su==='pw'){const x=document.getElementById('pwx');if(x)x.innerHTML=pwParts()}}
+ if(t.dataset.ob){OB[t.dataset.ob]=t.value;const side=document.querySelector('.ob-bd aside');if(side)side.innerHTML=obSide()}
+ if(t.dataset.pf){OB.prof[t.dataset.pf]=t.value}
+ if(t.dataset.ci!==undefined){const i=+t.dataset.ci,v=t.value.replace(/\D/g,'');
+   if(v.length>1){v.slice(0,6-i).split('').forEach((d,k)=>{CODE[i+k]=d;const el=document.getElementById('ci'+(i+k));if(el)el.value=d});const n=document.getElementById('ci'+Math.min(5,i+v.length));if(n)n.focus();return}
+   CODE[i]=v;t.value=v;if(v){const n=document.getElementById('ci'+(i+1));if(n)n.focus()}}
+});
+document.addEventListener('keydown',e=>{const t=e.target;if(t.dataset&&t.dataset.ci!==undefined&&e.key==='Backspace'&&!t.value){const p=document.getElementById('ci'+(+t.dataset.ci-1));if(p){p.focus();p.value='';CODE[+t.dataset.ci-1]=''}}});
+document.addEventListener('change',e=>{if(e.target.dataset.ob){OB[e.target.dataset.ob]=e.target.value;const side=document.querySelector('.ob-bd aside');if(side)side.innerHTML=obSide()}});
+/* self-test probe: runs the auth flow inside this page (works on file://) */
+addEventListener('message',async e=>{const m=e.data;if(!m||m.ax!=='probe-auth')return;const w=ms=>new Promise(r=>setTimeout(r,ms));const R=[];const ok=(n,c)=>R.push([!!c,n]);
+ const set=(id,v)=>{const x=document.getElementById(id);x.value=v;x.dispatchEvent(new Event('input',{bubbles:true}))};const txt=()=>document.body.innerText;
+ const typeIn=id=>{const el=document.getElementById(id);el.focus();let okk=true;for(const c of 'Gelora'){el.value+=c;el.dispatchEvent(new Event('input',{bubbles:true}));if(document.activeElement!==el||!el.isConnected)okk=false}el.value='';el.dispatchEvent(new Event('input',{bubbles:true}));return okk};
+ try{go('login');ok('Typing keeps focus: login email',typeIn('le'));go('signup');ok('Typing keeps focus: sign-up fields',['sn','se','sp','sp2'].every(typeIn));
+ V='onboard';OB.step=0;render();ok('Typing keeps focus: Store name & website',typeIn('o-n')&&typeIn('o-w'));OB.step=2;render();ok('Typing keeps focus: assistant & welcome',typeIn('o-a')&&typeIn('o-wm'));
+ OB.step=1;OB.mode='manual';render();ok('Typing keeps focus: company profile fields',typeIn('p-desc')&&typeIn('p-phone'));OB=Object.assign(OB,{step:0,store:'',web:'',mode:'crawl',asst:'Mira'});go('login');document.getElementById('le').value=DEMO.email;document.getElementById('lp').value='nope';document.getElementById('f-login').requestSubmit();ok('Login: wrong password error',/Wrong email or password/.test(txt()));
+ go('signup');set('sn','Budi');set('se',DEMO.email);set('sp','short');set('sp2','x');document.getElementById('f-signup').requestSubmit();
+ ok('Sign up: validation (registered email, rules, match)',/already registered/.test(txt())&&/doesn’t meet/.test(txt())&&/must match/.test(txt()));
+ set('se','budi@toko.id');set('sp','Toko2026!Sport');set('sp2','Toko2026!Sport');document.getElementById('f-signup').requestSubmit();ok('Sign up → Verify email',V==='verify');
+ '123456'.split('').forEach((c,k)=>{const x=document.getElementById('ci'+k);x.value=c;x.dispatchEvent(new Event('input',{bubbles:true}))});await w(1300);
+ ok('Verify: digits survive the countdown',[0,1,2,3,4,5].map(k=>document.getElementById('ci'+k).value).join('')==='123456');
+ document.getElementById('f-verify').requestSubmit();ok('Verify: code 123456 → Onboarding',V==='onboard'&&OB.step===0);
+ document.querySelector('[data-a=obnext]').click();ok('Onboarding: store name + industry required',/Fill in store name and industry/.test(txt()));
+ set('o-n','Toko Budi');const s=document.getElementById('o-i');s.value='Retail';s.dispatchEvent(new Event('change',{bubbles:true}));
+ for(let k=0;k<4;k++)document.querySelector('[data-a=obnext]').click();ok('Onboarding reaches Finish (5 steps)',OB.step===4&&/Launch workspace/.test(txt()));
+ }catch(x){ok('Auth error: '+x.message,false)}
+ e.source.postMessage({ax:'probe-r',id:m.id,res:R},'*')});
+/* ---------- screenshot mode ---------- */
+const SHOT={login:()=>{},login_err:()=>{E={login:'Wrong email or password.',le:'andi@gelorasport.id'}},
+ signup:()=>{V='signup';Object.assign(SU,{name:'Andi',email:'andi.new@gelorasport.id',pw:'Gelora2026',pw2:''})},
+ signup_err:()=>{V='signup';Object.assign(SU,{name:'Andi',email:DEMO.email,pw:'Gelora2026!x',pw2:'Gelora2026!x'});E={email:'This email is already registered. Log in?'}},
+ verify:()=>{V='verify';SU.email='andi@gelorasport.id';cd=39},
+ ob1:()=>{V='onboard';Object.assign(OB,{step:0,store:'Gelora Sport',web:'https://gelorasport.id',ind:'Retail'})},
+ ob2:()=>{V='onboard';Object.assign(OB,{step:1,store:'Gelora Sport',web:'https://gelorasport.id',ind:'Retail',crawled:true});PROF.forEach(([k,,v])=>{if(v)OB.prof[k]=v})},
+ ob3:()=>{V='onboard';Object.assign(OB,{step:2,store:'Gelora Sport',web:'https://gelorasport.id',ind:'Retail'})},
+ ob4:()=>{V='onboard';Object.assign(OB,{step:3,store:'Gelora Sport',web:'https://gelorasport.id',ind:'Retail',scan:true})},
+ ob5:()=>{V='onboard';Object.assign(OB,{step:4,store:'Gelora Sport',web:'https://gelorasport.id',ind:'Retail'})}};
+const q=new URLSearchParams(location.search);
+if(q.get('view')==='signup')V='signup';
+if(q.get('shot')&&SHOT[q.get('shot')]){document.body.classList.add('shot');SHOT[q.get('shot')]()}
+function fit(){if(document.body.classList.contains('shot'))return;$('#tab').style.transform=`scale(${Math.min((innerWidth-32)/1180,(innerHeight-32)/820,1.4)})`}
+addEventListener('resize',fit);fit();render();
+if(q.get('shot')){const sel=q.get('sel');if(sel){document.body.setAttribute('data-rects',JSON.stringify(JSON.parse(sel).map(x=>{const e=document.querySelector(x);if(!e)return null;const r=e.getBoundingClientRect();return[Math.round(r.left),Math.round(r.top),Math.round(r.width),Math.round(r.height)]})))}}
+</script>
+</body>
+</html>

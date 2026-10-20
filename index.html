@@ -1,0 +1,1484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AX GANES Home Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --a:#305CFF;--a08:rgba(48,92,255,.08);--a15:rgba(48,92,255,.15);--a30:rgba(48,92,255,.3);
+  --t1:#101828;--t2:#344054;--t3:#475467;--t4:#5D6676;--t5:#98A2B3;
+  --bd:#E6E8EC;--bd2:#E1E4EA;--bd3:#DADDE3;--bg:#F6F7F9;--card:#FFFFFF;--red:#D92D20;--red2:#B42318;
+  --desk:#E4E6EB;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{background:var(--desk);font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:var(--t1);overflow:hidden}
+button{font-family:inherit;cursor:pointer}
+[hidden]{display:none!important}
+
+/* ---------- POC tools (same look as AX_GANES_Chat_Menus_POC) ---------- */
+.pocb{position:fixed;right:16px;bottom:16px;z-index:9000;display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:8px;border:1px solid rgba(255,255,255,.18);background:#0B1020;color:#E5E7EB;font:600 12px/1 system-ui,sans-serif;cursor:pointer}
+.pocb kbd,.poc kbd{font:600 11px ui-monospace,monospace;padding:2px 6px;border-radius:4px;background:rgba(255,255,255,.1);color:#E5E7EB}
+.pocb .pxrl{padding:3px 7px;border-radius:4px;background:#1E8FFF;color:#fff}
+.poc{position:fixed;top:0;right:0;bottom:0;width:min(360px,34vw);min-width:300px;z-index:9001;display:none;flex-direction:column;background:#0B1020;color:#C9CED8;border-left:1px solid rgba(255,255,255,.12);font:13px/1.45 system-ui,sans-serif}
+.poc.on{display:flex}
+.poc header{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:1px solid rgba(255,255,255,.1)}
+.poc header b{color:#fff;font-size:14px}.poc header i{font-style:normal;color:#8A8A92;margin-left:6px}
+.poc header button{background:none;border:0;color:#C9CED8;font-size:20px;cursor:pointer}
+.poc .pxbd{overflow:auto;flex:1}
+.poc .pxpn{padding:12px 14px;border-bottom:1px solid rgba(255,255,255,.08)}
+.poc h3{margin:0 0 8px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#8A8A92}
+.poc .pxmut{color:#8A8A92;font-size:12px}
+.poc .pxmut b{color:#E5E7EB}
+.poc .pxrow{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.poc .pxcol{display:flex;flex-direction:column;gap:4px}
+.poc .pxhb{padding:6px 10px;border-radius:6px;border:1px solid rgba(255,255,255,.16);background:#121933;color:#E5E7EB;font:600 12px system-ui,sans-serif;cursor:pointer;text-align:left}
+.poc .pxhb:hover{border-color:rgba(255,255,255,.32)}
+.poc .pxhb.pxgo,.poc .pxhb[aria-pressed=true]{background:#1E8FFF;border-color:#1E8FFF;color:#fff}
+.poc .pxhb.pxdn{border-color:rgba(248,113,113,.5);color:#FCA5A5}
+.poc .pxseg{display:flex;border:1px solid rgba(255,255,255,.16);border-radius:6px;overflow:hidden;margin-top:4px}
+.poc .pxseg button{flex:1;padding:7px 4px;background:none;border:0;color:#C9CED8;font:600 12px system-ui,sans-serif;cursor:pointer}
+.poc .pxseg button[aria-pressed=true]{background:#1E8FFF;color:#fff}
+.poc label.pxl{display:block;margin:10px 0 2px;font-size:12px;color:#8A8A92}
+.poc .pxguide{color:#C9CED8;font-size:12.5px;line-height:1.55}
+.poc .pxguide b{color:#fff}
+.poc kbd.k{display:inline-block;min-width:18px;text-align:center}
+.poc .pxkv{display:flex;justify-content:space-between;gap:8px;padding:2px 0;font-size:12px}.poc .pxkv b{color:#E5E7EB;font-weight:600}
+body.ax-poc-on #wrap{right:max(300px,min(360px,34vw))}
+
+/* ---------- Tablet stage ---------- */
+#wrap{position:fixed;left:0;right:0;top:0;bottom:0;display:flex;align-items:center;justify-content:center}
+#tab{width:1180px;height:820px;flex:none;border-radius:24px;overflow:hidden;position:relative;background:var(--bg);box-shadow:0 1px 3px rgba(0,0,0,.12),0 20px 60px rgba(16,24,40,.12);transform-origin:center center;display:flex;flex-direction:column}
+
+/* header */
+.hd{position:relative;z-index:10;height:88px;flex:none;padding:22px 40px 0;display:flex;align-items:center;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:12px;background:none;border:0;padding:0;text-align:left;color:inherit}
+.logo{width:44px;height:44px;border-radius:12px;background:var(--a);color:#fff;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;line-height:1;padding-bottom:4px}
+.brand b{display:block;font-size:17px;font-weight:700}
+.brand small{display:block;margin-top:2px;font-size:11px;font-weight:600;letter-spacing:.08em;color:var(--t4)}
+.nav{display:flex;align-items:center;gap:8px;position:relative}
+.pill{height:44px;padding:0 16px 0 14px;border-radius:22px;border:1px solid var(--bd2);background:#fff;color:var(--t1);font-size:15px;font-weight:500;display:flex;align-items:center;gap:8px}
+.pill:hover{border-color:#C9CED6}
+.pill[aria-expanded=true]{border-color:var(--a);background:var(--a08)}
+.alerts{height:44px;padding:0 14px;display:flex;align-items:center;gap:8px;color:var(--t2);font-size:15px;font-weight:500;cursor:default;border-radius:22px;position:relative}
+.badge{min-width:20px;height:20px;padding:0 6px;border-radius:10px;background:#E6E8EC;color:var(--t1);font-size:12px;font-weight:600;display:inline-flex;align-items:center;justify-content:center}
+.alerts.pulse:after{content:"";position:absolute;inset:-2px;border-radius:24px;border:2px solid var(--a);animation:pl 1.4s ease-out infinite}
+@keyframes pl{from{opacity:.9;transform:scale(1)}to{opacity:0;transform:scale(1.18)}}
+.av{width:32px;height:32px;border-radius:16px;background:var(--t1);color:#fff;font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center;flex:none}
+.me{padding:0 12px 0 6px}
+.gp .dot{width:8px;height:8px;border-radius:4px;background:var(--a)}
+.gp.off .dot,.gp.paused .dot{background:var(--t5)}
+
+/* body */
+.bd{flex:1;min-height:0;padding:20px 40px 24px;display:flex;position:relative}
+.aside{width:300px;flex:none;padding-right:28px;border-right:1px solid var(--bd);display:flex;flex-direction:column}
+.cap{font-size:12px;font-weight:600;letter-spacing:.08em;color:var(--t4);text-transform:uppercase}
+.prog{margin-top:6px;font-size:22px;font-weight:700}
+.segs{margin-top:12px;display:flex;gap:4px}.segs span{flex:1;height:4px;border-radius:2px;background:var(--bd);transition:background .4s}
+.steps{list-style:none;margin:20px 0 0;padding:0;display:flex;flex-direction:column;gap:4px}
+.steps li{display:flex;align-items:flex-start;gap:12px;padding:12px;border-radius:12px;transition:background .3s}
+.steps li.cur{background:rgba(48,92,255,.07)}
+.ring{width:22px;height:22px;flex:none;margin-top:1px;border-radius:11px;border:2px solid #C9CED6;background:#fff;display:flex;align-items:center;justify-content:center}
+.cur .ring{border-color:var(--a)}.cur .ring:after{content:"";width:8px;height:8px;border-radius:4px;background:var(--a)}
+.done .ring{border-color:var(--a);background:var(--a)}
+.steps .l{display:block;font-size:15px;line-height:1.35;font-weight:500}
+.steps .cur .l{font-weight:600}.steps .done .l{color:var(--t4)}
+.steps .s{display:block;margin-top:2px;font-size:13px;color:var(--t4)}
+.lnks{margin-top:auto;display:flex;flex-direction:column;align-items:flex-start}
+.tl{height:40px;padding:0 12px;border:0;background:none;color:var(--t3);font-size:14px;font-weight:500;border-radius:10px}
+.tl:hover{background:#EEF0F3;color:var(--t1)}
+
+.main{flex:1;min-width:0;padding-left:40px;display:flex;flex-direction:column;position:relative}
+.date{font-size:14px;color:var(--t4)}
+h1{margin:4px 0 0;font-size:28px;line-height:1.25;font-weight:700;letter-spacing:-.01em}
+.greet{margin:4px 0 0;font-size:16px;line-height:1.45;color:var(--t3)}
+.donebar{height:36px;margin-top:8px;display:flex;align-items:center;gap:8px;font-size:14px}
+.donebar .nx{color:var(--t4)}
+.undo{margin-left:auto;height:36px;padding:0 8px;border:0;background:none;color:var(--t2);font-size:14px;font-weight:600;text-decoration:underline;text-underline-offset:3px}
+.card{background:#fff;border:1px solid var(--bd);border-radius:20px;box-shadow:0 1px 2px rgba(16,24,40,.04);padding:26px 30px}
+.card.anim{animation:cin .35s cubic-bezier(.2,.8,.2,1)}
+@keyframes cin{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.ctop{display:flex;align-items:center;justify-content:space-between;font-size:14px}
+.tag{display:flex;align-items:center;gap:8px;font-weight:600;color:var(--t2)}
+.tag.urg{color:var(--red2)}.tag.urg:before{content:"";width:8px;height:8px;border-radius:4px;background:var(--red)}
+.stp{color:var(--t4)}
+.card h2{margin:16px 0 0;font-size:24px;line-height:1.3;font-weight:600}
+.card p{margin:6px 0 0;font-size:16px;line-height:1.5;color:var(--t3)}
+.draft{margin-top:16px;background:var(--bg);border-radius:12px;padding:12px 16px}
+.draft div{font-size:12px;font-weight:600;letter-spacing:.06em;color:var(--t4)}
+.draft p{margin:4px 0 0!important;font-size:15px!important;color:var(--t1)!important}
+.acts{margin-top:24px;display:flex;align-items:center;gap:4px}
+.pri{height:48px;padding:0 24px;border:0;border-radius:12px;background:var(--a);color:#fff;font-size:16px;font-weight:600;margin-right:8px}
+.pri:hover{background:#2449D8}
+.sec{height:44px;padding:0 12px;border:0;background:none;color:var(--t3);font-size:15px;font-weight:500;border-radius:10px}
+.sec:hover{background:#EEF0F3;color:var(--t1)}
+.sepd{color:#C2C7D0}
+.clr{display:flex;align-items:flex-start;gap:16px}
+.ck{width:48px;height:48px;flex:none;border-radius:24px;background:var(--a08);display:flex;align-items:center;justify-content:center}
+.clr h2{margin:0}.clr p{margin-top:4px}
+.shh{margin-top:22px;display:flex;align-items:baseline;gap:8px}.shh b{font-size:14px}.shh span{font-size:13px;color:var(--t4)}
+.shl{margin-top:8px;display:flex;flex-direction:column}
+.shb{min-height:60px;padding:10px 4px;border:0;border-top:1px solid #EEF0F3;background:none;text-align:left;display:flex;align-items:center;gap:12px;border-radius:0}
+.shb:hover{background:#FAFBFC}
+.shb .x{flex:1;display:flex;flex-direction:column;gap:2px}.shb .x b{font-size:16px;font-weight:600}.shb .x small{font-size:13px;color:var(--t4)}
+.shb .o{font-size:14px;font-weight:600;color:var(--a)}
+
+/* ask field */
+.askw{margin-top:auto;position:relative}
+.ask{height:60px;border-radius:30px;background:#fff;border:1px solid var(--bd3);display:flex;align-items:center;gap:10px;padding:0 8px 0 20px;transition:border-color .15s,box-shadow .15s}
+.ask:focus-within{border-color:var(--a);box-shadow:0 0 0 4px var(--a08)}
+.ask.lis{border:2px solid var(--a)}
+.ask input{flex:1;min-width:0;height:44px;border:0;outline:0;background:none;font-family:inherit;font-size:16px;color:var(--t1)}
+.speak{height:44px;padding:0 16px 0 12px;border-radius:22px;border:0;background:var(--a08);color:var(--a);font-size:15px;font-weight:600;display:flex;align-items:center;gap:6px}
+.speak.on{background:var(--a);color:#fff}
+.askbtn{height:44px;padding:0 18px;border-radius:22px;border:0;background:var(--a);color:#fff;font-size:15px;font-weight:600}
+.tip{position:absolute;right:0;bottom:70px;background:var(--t1);color:#fff;font-size:13px;border-radius:10px;padding:6px 6px 6px 14px;display:flex;align-items:center;gap:10px;box-shadow:0 8px 24px rgba(16,24,40,.18);animation:cin .3s}
+.tip button{height:32px;padding:0 10px;border:0;border-radius:8px;background:rgba(255,255,255,.14);color:#fff;font-size:13px;font-weight:600}
+.tip:after{content:"";position:absolute;right:40px;bottom:-5px;width:10px;height:10px;background:var(--t1);transform:rotate(45deg)}
+
+/* voice panel (waveform from AX_GANES_Chat_Menus_POC) */
+.vx{position:absolute;left:40px;right:0;top:108px;bottom:76px;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;animation:vxin .3s ease-out;z-index:4;
+  --vw1:rgba(31,111,229,.85);--vw2:rgba(20,70,190,1);--vwf:rgba(31,111,229,.08);--vws:rgba(31,111,229,.55)}
+@keyframes vxin{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.vx-say{max-width:560px;min-height:3.4em;display:grid;place-items:center;font-size:26px;line-height:1.35;color:var(--t1)}
+.vx-say.dim{font-size:16px;color:var(--t4)}
+.vx-cv{display:block;width:560px;height:120px;margin-top:10px}
+.vx-src{margin-top:4px;font-size:12px;color:var(--t4)}
+.vx-ctl{display:flex;gap:10px;margin-top:14px}
+.vbtn{height:44px;padding:0 16px;border-radius:22px;border:1px solid var(--bd3);background:#fff;color:var(--t2);font-size:14px;font-weight:600;display:flex;align-items:center;gap:6px}
+.vbtn.p{background:var(--a);border-color:var(--a);color:#fff}
+.vbtn:disabled{opacity:.4;cursor:default}
+
+/* gesture panel + confirm bar (from Gesture.dc.html) */
+.gpan{position:absolute;top:84px;right:40px;width:310px;background:#fff;border:1px solid var(--bd);border-radius:16px;box-shadow:0 16px 40px rgba(16,24,40,.14);padding:14px 14px 10px;z-index:20;animation:cin .25s}
+.gpan .h{display:flex;align-items:center;justify-content:space-between;padding:0 4px 8px}
+.gpan .h b{font-size:15px}.gpan .h span{font-size:12px;color:var(--t4);display:flex;align-items:center;gap:6px}
+.gpan .h span i{width:8px;height:8px;border-radius:4px;background:var(--a)}
+.chip{width:100%;position:relative;overflow:hidden;min-height:56px;margin-top:4px;padding:6px 8px;border-radius:12px;border:1px solid var(--bd);background:#fff;text-align:left;display:flex;align-items:center;gap:10px;user-select:none;-webkit-user-select:none;touch-action:none}
+.chip.on{border-color:var(--a);background:var(--a08)}
+.chip .x{display:flex;flex-direction:column;gap:1px;flex:1}.chip .x b{font-size:14px;font-weight:600}.chip .x small{font-size:12px;color:var(--t4)}
+.chip kbd{font:600 11px/18px 'Plus Jakarta Sans';padding:0 6px;border:1px solid var(--bd3);border-radius:5px;color:var(--t4)}
+.chip .bar{position:absolute;left:0;bottom:0;height:3px;background:var(--a);width:0}
+.gpan .f{margin-top:6px;padding:4px 4px 0;display:flex;align-items:center;justify-content:space-between;font-size:13px;color:var(--t4)}
+.gpan .f button{height:36px;padding:0 6px;border:0;background:none;color:var(--t3);font-size:13px;font-weight:600}
+.cam{margin-top:8px;border-radius:10px;overflow:hidden;background:#0B1020;position:relative;height:120px}
+.cam video{width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}
+.cam span{position:absolute;left:8px;bottom:6px;font-size:11px;color:#fff;background:rgba(0,0,0,.45);padding:2px 6px;border-radius:6px}
+.gbar{position:absolute;left:490px;bottom:100px;width:540px;overflow:hidden;background:#fff;border:1px solid var(--bd);border-radius:16px;box-shadow:0 16px 40px rgba(16,24,40,.16);padding:12px 12px 14px 14px;display:flex;align-items:center;gap:12px;z-index:21;animation:cin .2s}
+.gbar .ic{width:48px;height:48px;flex:none;border-radius:24px;background:var(--a08);display:flex;align-items:center;justify-content:center}
+.gbar .ic.g{background:#F2F4F7}
+.gbar .x{flex:1;display:flex;flex-direction:column;gap:2px}.gbar .x b{font-size:16px}.gbar .x small{font-size:13px;color:var(--t4)}
+.gbar .cn{height:44px;padding:0 18px;border-radius:12px;border:1px solid #D0D5DD;background:#fff;font-size:15px;font-weight:600}
+.gbar .bar{position:absolute;left:0;bottom:0;height:4px;background:var(--a)}
+
+/* dropdown: profile */
+.dd{position:absolute;top:52px;right:0;width:300px;background:#fff;border:1px solid var(--bd);border-radius:16px;box-shadow:0 16px 40px rgba(16,24,40,.14);padding:8px;z-index:30;animation:cin .2s}
+.dd .who{display:flex;align-items:center;gap:12px;padding:10px 10px 12px;border-bottom:1px solid var(--bd);margin-bottom:6px}
+.dd .who b{display:block;font-size:15px}.dd .who small{display:block;font-size:12.5px;color:var(--t4)}
+.dd .av{width:40px;height:40px;border-radius:20px;font-size:15px}
+.di{width:100%;min-height:44px;padding:8px 10px;border:0;background:none;border-radius:10px;display:flex;align-items:center;gap:12px;text-align:left;color:var(--t1);font-size:14.5px;font-weight:500}
+.di:hover{background:var(--bg)}
+.di svg{color:var(--t4);flex:none}
+.di small{margin-left:auto;font-size:11.5px;color:var(--t5);font-weight:500}
+.dh{margin:10px 10px 4px;font-size:11px;font-weight:700;letter-spacing:.08em;color:var(--t4)}
+.dsep{height:1px;background:var(--bd);margin:6px 2px}
+
+/* All menus sheet */
+.scrim{position:absolute;inset:0;background:rgba(16,24,40,.28);z-index:40;animation:fd .25s}
+@keyframes fd{from{opacity:0}}
+.sheet{position:absolute;left:50%;top:50%;width:820px;max-height:720px;transform:translate(-50%,-50%);background:#fff;border-radius:24px;box-shadow:0 24px 60px rgba(16,24,40,.22);z-index:41;display:flex;flex-direction:column;animation:shin .55s cubic-bezier(.16,1,.3,1)}
+@keyframes shin{from{opacity:0;transform:translate(-50%,40%) scale(.96)}to{opacity:1;transform:translate(-50%,-50%)}}
+.sh{padding:24px 28px 0;display:flex;align-items:flex-start;gap:16px}
+.sh h3{margin:0;font-size:22px}.sh p{margin:4px 0 0;font-size:14px;color:var(--t4)}
+.sh .sp{flex:1}
+.close{height:40px;padding:0 14px;border-radius:20px;border:1px solid var(--bd2);background:#fff;font-size:14px;font-weight:600;color:var(--t2)}
+.msrch{margin:16px 28px 0;height:44px;border:1px solid var(--bd3);border-radius:12px;display:flex;align-items:center;gap:8px;padding:0 14px}
+.msrch:focus-within{border-color:var(--a)}
+.msrch input{flex:1;border:0;outline:0;font-family:inherit;font-size:15px}
+.sb{overflow:auto;padding:4px 28px 8px}
+.ms{margin-top:18px}
+.ms h4{margin:0 0 8px;font-size:12px;font-weight:700;letter-spacing:.08em;color:var(--t4);text-transform:uppercase;display:flex;align-items:center;gap:10px}
+.ms h4:after{content:"";flex:1;height:1px;background:var(--bd)}
+.mg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.mi{min-height:76px;padding:12px;border:1px solid var(--bd);border-radius:14px;background:#fff;display:flex;align-items:flex-start;gap:12px;text-align:left;animation:miIn .5s cubic-bezier(.2,.9,.3,1.15) both;animation-delay:calc(.12s + var(--i,0)*40ms)}
+@keyframes miIn{from{opacity:0;transform:translateY(16px) scale(.9)}to{opacity:1;transform:none}}
+.mi:hover{border-color:var(--a);box-shadow:0 4px 14px rgba(48,92,255,.08)}
+.mi .ti{width:40px;height:40px;flex:none;border-radius:12px;background:var(--a08);color:var(--a);display:flex;align-items:center;justify-content:center}
+.mi .x{min-width:0}.mi b{display:block;font-size:15px;font-weight:600;color:var(--t1)}.mi small{display:block;margin-top:2px;font-size:12.5px;line-height:1.4;color:var(--t4)}
+.mi .tbd{display:inline-block;margin-left:4px;font-size:10.5px;font-weight:700;color:var(--t4);background:#F2F4F7;border-radius:6px;padding:1px 5px;vertical-align:2px}
+.sf{margin:12px 28px 24px;padding:12px 14px;border-radius:14px;background:var(--bg);display:flex;align-items:center;gap:12px;font-size:14px;color:var(--t3)}
+.sf svg{color:var(--t4);flex:none}.sf b{color:var(--t1)}
+.sf .sp{flex:1}
+.ghost{height:40px;padding:0 14px;border-radius:12px;border:1px solid var(--bd3);background:#fff;font-size:14px;font-weight:600;color:var(--t1);white-space:nowrap}
+.empty{padding:30px 0;text-align:center;color:var(--t4);font-size:14px}
+
+/* Settings (layout from POC Profile) */
+.pg{flex:1;min-height:0;padding:12px 40px 24px;display:flex;flex-direction:column}
+.back{align-self:flex-start;height:36px;padding:0 12px 0 8px;border:0;background:none;border-radius:10px;font-size:14px;font-weight:600;color:var(--t3);display:flex;align-items:center;gap:4px}
+.back:hover{background:#EEF0F3;color:var(--t1)}
+.pgh{margin:8px 0 14px}.pgh h2{margin:0;font-size:24px}.pgh p{margin:4px 0 0;font-size:14px;color:var(--t4)}
+.pfg{flex:1;min-height:0;display:grid;grid-template-columns:300px minmax(0,1fr);gap:16px}
+.pnl{background:#fff;border:1px solid var(--bd);border-radius:20px;min-height:0}
+.pfl{padding:22px;display:flex;flex-direction:column;gap:14px}
+.pfa{width:72px;height:72px;border-radius:36px;background:var(--t1);color:#fff;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:600}
+.pfl h3{margin:0;font-size:20px}.pfl .w small{display:block;margin-top:2px;font-size:13px;color:var(--t4)}
+.pfk{display:flex;flex-direction:column;gap:12px;padding-top:14px;border-top:1px solid var(--bd)}
+.pfk div{display:flex;justify-content:space-between;font-size:13px;color:var(--t4)}.pfk b{color:var(--t1);font-weight:600}
+.qb{height:6px;border-radius:3px;background:var(--bd);overflow:hidden}.qb i{display:block;height:100%;background:var(--a)}
+.pfo{margin-top:auto}
+.out{height:44px;width:100%;border-radius:12px;border:1px solid #F4C7C3;background:#fff;color:var(--red2);font-size:14px;font-weight:600}
+.svp{display:flex;flex-direction:column;overflow:hidden}
+.tabs{display:flex;gap:4px;padding:12px 12px 0;border-bottom:1px solid var(--bd);overflow-x:auto}
+.tabs button{height:40px;padding:0 14px;border:0;border-bottom:2px solid transparent;background:none;font-size:14px;font-weight:600;color:var(--t4);white-space:nowrap}
+.tabs button[aria-selected=true]{color:var(--a);border-bottom-color:var(--a)}
+.tc{flex:1;overflow:auto;padding:4px 0 12px}
+.sh2{margin:16px 20px 2px;font-size:12px;font-weight:700;letter-spacing:.06em;color:var(--t4);text-transform:uppercase}
+.r2{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 20px;border-bottom:1px solid var(--bd)}
+.r2 b{display:block;font-size:14.5px;font-weight:600}.r2 small{display:block;margin-top:2px;font-size:12.5px;line-height:1.45;color:var(--t4);max-width:520px}
+.sw{width:44px;height:26px;flex:none;border-radius:13px;border:0;background:#D0D5DD;position:relative;transition:background .2s}
+.sw:after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:10px;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.2);transition:left .2s}
+.sw[aria-checked=true]{background:var(--a)}.sw[aria-checked=true]:after{left:21px}
+.sw:disabled{opacity:.5;cursor:default}
+.seg{display:flex;background:var(--bg);border-radius:10px;padding:3px;flex:none}
+.seg button{height:32px;padding:0 12px;border:0;border-radius:8px;background:none;font-size:13px;font-weight:600;color:var(--t4)}
+.seg button[aria-pressed=true]{background:#fff;color:var(--t1);box-shadow:0 1px 2px rgba(16,24,40,.08)}
+.poses{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:12px 20px 4px}
+.pose{display:flex;align-items:center;gap:10px;padding:8px 10px;border:1px solid var(--bd);border-radius:12px}
+.pose b{display:block;font-size:13.5px}.pose small{display:block;font-size:12px;color:var(--t4)}
+.ff{display:grid;grid-template-columns:1fr 1fr;gap:4px 16px;padding:4px 20px}
+.ff label{display:block;margin-top:14px;font-size:13px;font-weight:600;color:var(--t2)}
+.ff input,.ff select{width:100%;height:44px;margin-top:6px;padding:0 12px;border:1px solid var(--bd3);border-radius:10px;font-family:inherit;font-size:14.5px;color:var(--t1);background:#fff}
+.ff input[readonly]{background:var(--bg);color:var(--t4)}
+.ff small{display:block;margin-top:4px;font-size:12px;color:var(--t4)}
+.note{margin:16px 20px;padding:14px 16px;border-radius:12px;background:var(--bg);font-size:14px;line-height:1.5;color:var(--t3)}
+.badge2{display:inline-block;font-size:11px;font-weight:700;background:var(--a08);color:var(--a);border-radius:6px;padding:2px 6px;margin-left:6px;vertical-align:1px}
+
+/* AI room (from POC) */
+.ai{flex:1;min-height:0;display:flex;flex-direction:column;width:100%;max-width:860px;margin:0 auto;padding:4px 40px 24px}
+.aih{display:flex;align-items:center;gap:12px;padding:6px 0 12px;border-bottom:1px solid var(--bd)}
+.aih .back{margin-right:4px}
+.aiav{width:40px;height:40px;flex:none;border-radius:12px;background:var(--a);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px;padding-bottom:2px}
+.aiav.sm{width:34px;height:34px;font-size:16px;border-radius:10px}
+.aih b{display:block;font-size:16px}.aih small{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--t4)}
+.aih small i{width:8px;height:8px;border-radius:4px;background:#12B76A}
+.ail{flex:1;min-height:0;overflow:auto;display:flex;flex-direction:column;gap:14px;padding:16px 2px}
+.aiu{align-self:flex-end;max-width:70%;padding:12px 16px;border-radius:16px 16px 4px 16px;background:var(--a);color:#fff;font-size:15px;line-height:1.5;animation:cin .25s}
+.aiu small{display:block;margin-top:4px;text-align:right;font-size:11px;opacity:.85}
+.aia{display:flex;align-items:flex-start;gap:12px;max-width:88%;animation:cin .3s}
+.aic{min-width:0;padding:16px 18px;border:1px solid var(--bd);border-radius:4px 16px 16px 16px;background:#fff}
+.aic h4{margin:0 0 6px;font-size:17px}
+.aic p{margin:0;font-size:15px;line-height:1.55;color:var(--t2);white-space:pre-line}
+.aic .btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.ab{height:40px;padding:0 14px;border-radius:10px;border:1px solid var(--bd3);background:#fff;font-size:14px;font-weight:600;color:var(--t1)}
+.ab.p{background:var(--a);border-color:var(--a);color:#fff}
+.aic time{display:block;margin-top:10px;font-size:11px;color:var(--t5)}
+.aid{display:flex;gap:5px;padding:6px 2px}.aid i{width:7px;height:7px;border-radius:50%;background:var(--t5);animation:aidp 1s infinite}.aid i:nth-child(2){animation-delay:.15s}.aid i:nth-child(3){animation-delay:.3s}
+@keyframes aidp{0%,60%,100%{opacity:.3;transform:translateY(0)}30%{opacity:1;transform:translateY(-3px)}}
+.ai .vx{left:40px;right:40px;top:70px}
+
+/* toast */
+.toast{position:absolute;top:92px;left:50%;transform:translateX(-50%);width:520px;text-align:center;background:var(--t1);color:#fff;font-size:14px;line-height:1.4;padding:12px 18px;border-radius:12px;box-shadow:0 8px 24px rgba(16,24,40,.18);z-index:60;animation:cin .25s}
+/* gesture panel in the task list column (storyboard frames 1–6) */
+.gs{margin-top:auto;border-top:1px solid var(--bd);padding-top:14px;display:flex;flex-direction:column}
+.gs .st{display:flex;align-items:center;gap:8px}
+.gs .st i{width:8px;height:8px;flex:none;border-radius:4px;background:var(--a)}
+.gs .st i.g{background:var(--t5)}
+.gs .st b{font-size:14px;font-weight:600;flex:1}
+.gs .st button{height:32px;padding:0 4px;border:0;background:none;color:var(--t3);font-size:13px;font-weight:600}
+.gs .sub{margin:2px 0 0 16px;font-size:12px;color:var(--t4)}
+.gs .chs{margin-top:10px;display:flex;flex-direction:column;gap:6px;transition:opacity .2s}
+.gs .chs.dim{opacity:.4;pointer-events:none}
+.gs .chip{margin-top:0;min-height:48px;padding:0 10px 0 6px;gap:8px}
+.gs .chip .x{flex-direction:row;align-items:center;justify-content:space-between}
+.gs .chip .x b{font-size:14px}.gs .chip .x small{font-size:12px}
+.gs .hnt{margin-top:8px;display:flex;align-items:center;gap:6px;font-size:12px;color:var(--t4)}
+.gs .on{margin-top:12px;height:44px;border-radius:12px;border:1px solid #D0D5DD;background:#fff;color:var(--t1);font-size:14px;font-weight:600}
+.gs .camt{margin-top:8px;height:72px;border-radius:10px;overflow:hidden;background:#0B1020;position:relative}
+.gs .camt video{width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}
+.gs .camt span{position:absolute;left:6px;bottom:4px;font-size:10.5px;color:#fff;background:rgba(0,0,0,.45);padding:1px 6px;border-radius:6px}
+.lnks.inl{margin-top:4px;flex-direction:row;align-items:center}
+.ask.typ{border:2px solid var(--a)}
+/* Gesture Shortcuts setup wizard */
+.wz{position:absolute;left:50%;top:50%;width:720px;transform:translate(-50%,-50%);background:#fff;border-radius:24px;box-shadow:0 24px 60px rgba(16,24,40,.22);z-index:41;padding:26px 30px 24px;animation:cin .3s}
+.wz .wh{display:flex;align-items:flex-start;justify-content:space-between}
+.wz h3{margin:0;font-size:22px}.wz .wh p{margin:4px 0 0;font-size:14px;color:var(--t4)}
+.wz ol{list-style:none;display:flex;gap:6px;margin:18px 0 0;padding:0}
+.wz ol li{flex:1;font-size:12.5px;font-weight:600;color:var(--t5)}
+.wz ol li:before{content:"";display:block;height:4px;border-radius:2px;background:var(--bd);margin-bottom:6px}
+.wz ol li.on{color:var(--t1)}.wz ol li.on:before{background:var(--a)}
+.wz .wb{margin-top:20px;min-height:250px}
+.wz .wf{margin-top:20px;display:flex;align-items:center;gap:8px}
+.wz .wf .sp{flex:1}
+.camb{height:200px;border-radius:16px;background:#0B1020;color:#C9CED8;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;overflow:hidden;position:relative}
+.camb video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}
+.chk{display:flex;gap:18px;margin-top:12px;font-size:14px;color:var(--t2)}
+.chk span{display:flex;align-items:center;gap:6px}
+.maprow{display:flex;align-items:center;gap:14px;padding:10px 0;border-bottom:1px solid var(--bd)}
+.maprow b{display:block;font-size:15px}.maprow small{display:block;font-size:12.5px;color:var(--t4)}
+.maprow .x{flex:1}
+.maprow select{height:44px;min-width:260px;border:1px solid var(--bd3);border-radius:10px;padding:0 10px;font-family:inherit;font-size:14.5px;background:#fff}
+.blk{margin-top:14px;padding:10px 14px;border-radius:12px;background:var(--bg);font-size:13px;color:var(--t3);display:flex;gap:8px;align-items:center}
+.prc{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.prc .chip{min-height:72px}
+.prc .ok{color:#067647;font-weight:600;font-size:13px}
+/* v2.5 guided task (to-do → next, next, done) */
+.gt{flex:1;min-height:0;background:var(--bg);display:flex;flex-direction:column;animation:cin .3s}
+.gt-top{flex:none;padding:8px 40px 0;display:flex;align-items:flex-start;gap:20px}
+.gt-top .x{flex:1}.gt-top small{display:block;font-size:12px;font-weight:600;letter-spacing:.08em;color:var(--t4);text-transform:uppercase}
+.gt-top b{display:block;margin-top:4px;font-size:20px;font-weight:700}
+.gt-segs{display:flex;gap:4px;margin-top:12px}.gt-segs span{flex:1;height:4px;border-radius:2px;background:var(--bd);transition:background .3s}.gt-segs span.on{background:var(--a)}
+.gt-body{flex:1;min-height:0;position:relative;display:flex;align-items:center;justify-content:center;padding:34px 40px 28px;overflow:hidden}
+.gt-stack{position:relative;width:640px;max-width:100%}
+.gt-paper{position:absolute;left:0;right:0;top:0;height:100%;background:#fff;border:1px solid var(--bd);border-radius:20px;box-shadow:0 1px 2px rgba(16,24,40,.04);pointer-events:none}
+.gt-paper.p1{transform:translateY(-30px) scale(.97);z-index:1}
+.gt-paper.p2{transform:translateY(-56px) scale(.94) rotate(-1.4deg);z-index:0}
+.gt-paper span{position:absolute;left:24px;top:8px;font-size:11.5px;font-weight:600;color:var(--t4);display:flex;align-items:center;gap:6px}
+.gt-paper span:before{content:"";width:7px;height:7px;border-radius:4px;background:#C9CED6}
+.gt-stack .gt-card{position:relative;z-index:2;width:100%;box-shadow:0 12px 32px rgba(16,24,40,.10)}
+.gt-card.in{animation:gtin .38s cubic-bezier(.2,.8,.2,1)}
+.gt-card.back{animation:gtback .38s cubic-bezier(.2,.8,.2,1)}
+@keyframes gtin{from{opacity:0;transform:translateY(-18px) scale(.965)}to{opacity:1;transform:none}}
+@keyframes gtback{from{opacity:0;transform:translateX(-80px)}to{opacity:1;transform:none}}
+.gt-foot{margin-top:24px;padding-top:14px;border-top:1px solid var(--bd);display:flex;align-items:center;gap:12px;font-size:13.5px;color:var(--t4)}
+.gt-foot .sp{flex:1}
+.gt-foot .pri{height:44px;margin:0;font-size:15px}
+.gt-foot .pri:disabled{opacity:.4;cursor:default}
+.gt-prev{position:absolute;left:-24px;top:50%;transform:translateY(-50%);width:210px;height:62%;min-height:260px;background:#fff;border:1px solid var(--bd);border-radius:20px;box-shadow:0 1px 2px rgba(16,24,40,.04);display:flex;flex-direction:column;justify-content:center;gap:10px;padding:24px 22px 24px 46px;text-align:left;font-family:inherit;color:var(--t1);transition:transform .2s,box-shadow .2s}
+.gt-prev:hover{transform:translateY(-50%) translateX(6px);box-shadow:0 8px 24px rgba(16,24,40,.10)}
+.gt-prev .ar{width:44px;height:44px;border-radius:22px;background:var(--a08);color:var(--a);display:flex;align-items:center;justify-content:center}
+.gt-prev b{font-size:18px;line-height:1.25}.gt-prev small{font-size:13px;color:var(--t4);line-height:1.4}
+.gt-card{width:640px;max-width:100%;align-self:flex-start;background:#fff;border:1px solid var(--bd);border-radius:20px;padding:30px 32px;animation:cin .3s}
+.gt-card h2{margin:0;font-size:24px;line-height:1.3}.gt-card>p{margin:6px 0 0;font-size:16px;line-height:1.5;color:var(--t3)}
+.gt-f{margin-top:22px}
+.gt-f label{display:block;font-size:13px;font-weight:600;color:var(--t2);margin-bottom:6px}
+.gt-in{display:flex;align-items:center;gap:8px;border:1px solid var(--bd3);border-radius:14px;padding:0 6px 0 14px;background:#fff}
+.gt-in:focus-within{border-color:var(--a);box-shadow:0 0 0 4px var(--a08)}
+.gt-in input,.gt-in textarea{flex:1;min-width:0;border:0;outline:0;font-family:inherit;font-size:16px;color:var(--t1);background:none;padding:13px 0}
+.gt-in textarea{min-height:96px;resize:vertical;line-height:1.5}
+.gt-in .speak{height:38px;padding:0 12px 0 10px;font-size:14px;align-self:center}
+.gt-two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.gt-ch{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:22px}
+.gt-ch button{min-height:84px;padding:14px 16px;border:1px solid var(--bd);border-radius:16px;background:#fff;text-align:left;display:flex;gap:12px;align-items:flex-start;font-family:inherit}
+.gt-ch button:hover{border-color:#C9CED6}.gt-ch button[aria-pressed=true]{border-color:var(--a);background:var(--a08)}
+.gt-ch .ti{width:40px;height:40px;flex:none;border-radius:12px;background:var(--a08);color:var(--a);display:flex;align-items:center;justify-content:center}
+.gt-ch b{display:block;font-size:15.5px;color:var(--t1)}.gt-ch small{display:block;margin-top:2px;font-size:13px;color:var(--t4);line-height:1.4}
+.gt-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
+.gt-chips button{height:40px;padding:0 16px;border-radius:20px;border:1px solid var(--bd3);background:#fff;font-size:14.5px;font-weight:500;color:var(--t2)}
+.gt-chips button[aria-pressed=true]{border-color:var(--a);background:var(--a08);color:var(--a);font-weight:600}
+.gt-drop{margin-top:22px;border:1.5px dashed #C9CED6;border-radius:16px;padding:26px;text-align:center;color:var(--t3);font-size:14.5px}
+.gt-drop b{display:block;color:var(--t1);font-size:16px;margin:8px 0 2px}
+.gt-drop .acts{justify-content:center;margin-top:14px}
+.gt-file{margin-top:12px;display:flex;flex-direction:column;gap:8px}
+.gt-file div{display:flex;align-items:center;gap:10px;padding:10px 14px;border:1px solid var(--bd);border-radius:12px;font-size:14.5px}
+.gt-file div span{flex:1}.gt-file em{font-style:normal;font-size:12.5px;font-weight:600;color:var(--t4)}
+.gt-file em.ok{color:#067647}.gt-file em.bad{color:var(--red2)}
+.gt-prog{margin-top:26px}.gt-prog .bar{height:8px;border-radius:4px;background:var(--bd);overflow:hidden}.gt-prog .bar i{display:block;height:100%;background:var(--a);transition:width .2s}
+.gt-prog p{margin:10px 0 0;font-size:14px;color:var(--t3)}
+.gt-kv{margin-top:20px;border-top:1px solid var(--bd)}.gt-kv div{display:flex;justify-content:space-between;gap:16px;padding:12px 0;border-bottom:1px solid var(--bd);font-size:15px}.gt-kv span{color:var(--t4)}.gt-kv b{text-align:right}
+.gt-ok{display:flex;align-items:center;gap:14px;margin-top:4px}
+.gt-ok .ck{width:52px;height:52px}
+.gt-note{margin-top:18px;padding:12px 14px;border-radius:12px;background:var(--bg);font-size:14px;color:var(--t3);line-height:1.5}
+.gt-code{margin-top:18px;padding:14px;border-radius:12px;background:#0B1020;color:#C9D4FF;font:13px/1.6 ui-monospace,Menlo,monospace;white-space:pre-wrap;word-break:break-all}
+.gt-list{margin:18px 0 0;padding:0;list-style:none}.gt-list li{display:flex;gap:10px;align-items:flex-start;padding:8px 0;font-size:15px;color:var(--t2)}
+.gt-list li i{width:22px;height:22px;flex:none;border-radius:11px;border:2px solid #C9CED6;margin-top:1px}.gt-list li.ok i{border-color:#067647;background:#067647}.gt-list li.no i{border-color:var(--red);background:var(--red)}
+.gt-bot{display:none}
+.gt-bot .sp{flex:1}
+.gt-bot .pri{margin-right:0}
+.gt-bot .pri:disabled{opacity:.4;cursor:default}
+body.shot{background:#F6F7F9}body.shot #wrap{position:static}body.shot #tab{transform:none!important;border-radius:0;box-shadow:none}
+</style>
+</head>
+<body>
+
+<button class="pocb" id="pocBtn" type="button" title="POC tools (`)"><span class="pxrl">Owner</span>POC tools <kbd>`</kbd></button>
+<aside class="poc" id="poc" aria-label="POC tools">
+  <header><div><b>POC tools</b><i>v2.9 · Home</i></div><button id="pocX" aria-label="Close POC tools">×</button></header>
+  <div class="pxbd">
+    <div class="pxpn"><h3>Scenario</h3><div class="pxcol" id="scs"></div></div>
+    <div class="pxpn"><h3>Guide</h3><div class="pxguide" id="hint"></div></div>
+    <div class="pxpn" id="gtools"><h3>Gesture frames (storyboard)</h3>
+      <div class="pxrow" id="gfr"></div>
+      <label class="pxl">Play flow</label>
+      <div class="pxrow"><button class="pxhb pxgo" data-flow="A">A · Hands busy (V sign)</button><button class="pxhb" data-flow="B">B · Cashier (thumb → fist)</button><button class="pxhb" data-flow="C">C · Restock (one finger)</button></div>
+      <label class="pxl">Simulate</label>
+      <div class="pxrow"><button class="pxhb" id="gAway">No hand for 60 s</button><button class="pxhb" id="gTab">Tab not active</button><button class="pxhb" id="gSetup">Run setup (2 min)</button></div>
+      <div class="pxmut" style="margin-top:8px">Keys: hold <kbd class="k">V</kbd> V sign · <kbd class="k">U</kbd> thumb up · <kbd class="k">O</kbd> one finger · <kbd class="k">F</kbd> fist</div>
+    </div>
+    <div class="pxpn"><h3>Options</h3>
+      <label class="pxl">Time of day</label><div class="pxseg" id="oTime"><button data-v="morning">Morning</button><button data-v="evening">Evening</button></div>
+      <label class="pxl">Voice input</label><div class="pxseg" id="oVoice"><button data-v="sim">Simulated</button><button data-v="real">Real microphone</button></div>
+      <label class="pxl">Gesture input</label><div class="pxseg" id="oCam"><button data-v="sim">Keys / chips</button><button data-v="real">Real camera</button></div>
+    </div>
+    <div class="pxpn"><h3>Self-test</h3><div class="pxmut">Runs every flow through the real engine and pages, then restores your data.</div>
+      <div class="pxrow"><button class="pxhb pxgo" id="bSelf" type="button">Run self-test</button></div><div class="pxmut" id="stSum" style="margin-top:8px;font-weight:600"></div><div id="stList" style="max-height:260px;overflow:auto;margin-top:6px;font-size:12px;line-height:1.5"></div></div>
+    <div class="pxpn"><h3>Navigation</h3><div class="pxrow"><button class="pxhb" id="btnReset">Reset scenario</button><button class="pxhb" id="bFs">Full screen</button><button class="pxhb pxdn" id="btnAll">Reset prototype</button></div></div>
+  </div>
+</aside>
+
+<div id="wrap"><div id="tab"></div></div>
+
+<script>
+/* =====================================================================
+   AX GANES V.2 · Home prototype (Owner POV · Retail · Gelora Sport)
+   Base: "AX · GANES Home — Tablet" (Option C + Gesture screens)
+   Reused from AX_GANES_Chat_Menus_POC: voice waveform, All menu motion,
+   Profile layout, AI room.
+   ===================================================================== */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const A='#305CFF';
+
+/* ---------- icons ---------- */
+const P={
+ grid:'<rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/>',
+ bell:'<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>',
+ down:'<path d="M6 9l6 6 6-6"/>',
+ search:'<circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/>',
+ mic:'<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0"/><path d="M12 17.5V21"/>',
+ check:'<path d="M5 12.5l4.5 4.5L19 7.5"/>',
+ ccheck:'<circle cx="12" cy="12" r="9.5"/><path d="M8 12.5l2.7 2.7L16 9.8"/>',
+ right:'<path d="M9 6l6 6-6 6"/>',
+ left:'<path d="M15 6l-6 6 6 6"/>',
+ chat:'<path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/>',
+ box:'<path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8"/><path d="M12 13v8"/>',
+ book:'<path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2V5z"/><path d="M19 19v2H6"/>',
+ flask:'<path d="M9 3h6"/><path d="M10 3v6L4.5 18.5A1.7 1.7 0 0 0 6 21h12a1.7 1.7 0 0 0 1.5-2.5L14 9V3"/><path d="M7 15h10"/>',
+ gap:'<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6V14"/><path d="M12 17.5v.01"/>',
+ compass:'<circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5 5-2z"/>',
+ bot:'<rect x="4" y="7" width="16" height="12" rx="3"/><path d="M12 3v4"/><circle cx="9" cy="13" r="1.2"/><circle cx="15" cy="13" r="1.2"/>',
+ flow:'<rect x="3" y="3" width="6" height="6" rx="1.5"/><rect x="15" y="15" width="6" height="6" rx="1.5"/><path d="M6 9v3a3 3 0 0 0 3 3h6"/>',
+ plug:'<path d="M9 2v6"/><path d="M15 2v6"/><path d="M6 8h12v3a6 6 0 0 1-12 0V8z"/><path d="M12 17v5"/>',
+ spark:'<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3z"/>',
+ user:'<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
+ hand:'<path d="M8 13V5.5a1.5 1.5 0 0 1 3 0V11"/><path d="M11 10V4.5a1.5 1.5 0 0 1 3 0V11"/><path d="M14 10.5V6a1.5 1.5 0 0 1 3 0v8a7 7 0 0 1-7 7h-.5a6 6 0 0 1-5-2.7L3 15.5a1.5 1.5 0 0 1 2.5-1.7L8 16"/>',
+ card:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18"/>',
+ team:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7"/><path d="M18 14a6.5 6.5 0 0 1 3.5 6"/>',
+ list:'<path d="M8 6h13M8 12h13M8 18h13"/><path d="M3.5 6h.01M3.5 12h.01M3.5 18h.01"/>',
+ lock:'<rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>',
+ help:'<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6V14"/><path d="M12 17.5v.01"/>',
+ out:'<path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3"/><path d="M10 17l-5-5 5-5"/><path d="M5 12h11"/>',
+ gear:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>',
+ stop:'<rect x="6" y="6" width="12" height="12" rx="2"/>',
+ x:'<path d="M6 6l12 12M18 6L6 18"/>',
+ redo:'<path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/>'
+};
+const ic=(n,s=18,w=1.8)=>`<svg aria-hidden="true" width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round">${P[n]}</svg>`;
+/* hand poses from Gesture.dc.html */
+const FING={peace:'M76,100 L62.0,43.7 M94,96 L105.5,31.0 M112,98 L112.0,85.0 M129,104 L129.0,91.0',thumb:'M76,100 L74.0,87.2 M94,96 L93.5,83.0 M112,98 L113.4,85.1 M129,104 L132.1,91.4',point:'M76,100 L76.0,42.0 M94,96 L94.0,83.0 M112,98 L112.0,85.0 M129,104 L129.0,91.0',fist:'M76,100 L74.0,87.2 M94,96 L93.5,83.0 M112,98 L113.4,85.1 M129,104 L132.1,91.4'};
+const THUMB={peace:'M66,138 L96,126',thumb:'M66,124 L38,58',point:'M66,138 L96,126',fist:'M66,138 L96,126'};
+const handSvg=(k,s=36,c='#344054')=>`<svg aria-hidden="true" width="${s}" height="${s}" viewBox="14 24 172 166"><path d="${FING[k]}" stroke="${c}" stroke-width="22" stroke-linecap="round" fill="none"/><path d="${FING[k]}" stroke="#fff" stroke-width="14" stroke-linecap="round" fill="none"/><rect x="62" y="92" width="80" height="78" rx="26" fill="#fff" stroke="${c}" stroke-width="5"/><path d="${THUMB[k]}" stroke="${c}" stroke-width="22" stroke-linecap="round" fill="none"/><path d="${THUMB[k]}" stroke="#fff" stroke-width="14" stroke-linecap="round" fill="none"/></svg>`;
+
+/* ---------- data (from Option C) ---------- */
+const SETUP=[
+ {tag:'Setup · about 3 min',source:'Products',short:'Add your products',title:'Add your products',body:'Ganes answers questions and recommends products from your catalogue. Upload a CSV, or add them one by one.',cta:'Start',alt:'Add one by one',done:'Products saved.',altMsg:'Opens Products with an empty product form.'},
+ {tag:'Setup · about 2 min',source:'Knowledge Base',short:'Add store documents',title:'Add your store documents',body:'Return policy, shipping and payment. Ganes answers shoppers from these. Add files or a web page.',cta:'Add documents',alt:'Add a web page',done:'Documents processed.',altMsg:'Paste a link and Ganes reads the page.'},
+ {tag:'Setup · about 2 min',source:'Chat Simulator',short:'Test the chatbot',title:'Test your chatbot',body:'Ask what your shoppers usually ask. Ganes shows how many it answered, with a fix for each miss.',cta:'Run a test',alt:'Use sample questions',done:'Test finished: 8 of 10 answered.',altMsg:'Runs 10 common questions for a sports store.'},
+ {tag:'Setup · about 5 min',source:'Chatbot Settings',short:'Install on your website',title:'Put the chatbot on your website',body:'Copy one line of code into your site. Ganes checks when the chat widget appears.',cta:'Get embed code',alt:'Send code to my developer',done:'Widget detected. Chatbot online.',altMsg:'Emails the code and steps to your developer.'}
+];
+const SUBS={
+ failed:{tag:'1 of 2 documents couldn’t be read',title:'“Promo Cicilan.pdf” couldn’t be read',body:'“Kebijakan Retur.pdf” is ready, so Ganes can already answer return questions. “Promo Cicilan.pdf” is a scanned image: upload it again as a text PDF.',cta:'Upload again',alt:'Continue without it',done:'Documents processed.',altMsg:'Moves on to step 3. The failed file comes back later as a daily task.'},
+ result:{tag:'Test finished · 8 of 10 answered',title:'Ganes answered 8 of 10 test questions',body:'2 questions had no answer: “Can I pay in installments?” and “Do you deliver to Bekasi?” Add the answers and Ganes uses them right away.',cta:'Add 2 answers',alt:'Continue to next step',done:'Test passed: 10 of 10 answered.',altMsg:'Moves on to step 4. The 2 questions stay in Answer Gaps.'},
+ waiting:{tag:'Waiting for your website',title:'Checking your website for the chat widget…',body:'Paste the code into your website, just before the closing body tag, then save. Ganes checks every minute and moves on by itself when the widget appears.',cta:'Check now',alt:'Send code to my developer',done:'Widget detected. Chatbot online.',altMsg:'Emails the code and steps to your developer.'}
+};
+const TASKS=[
+ {urgent:true,tag:'Customer waiting · 12 min',source:'Conversations',short:'Reply to a waiting customer',title:'“Can I return shoes that are too small?”',body:'A shopper on your website asked for a person. Ganes drafted a reply from your return policy.',draft:'Hi! Yes, you can return them within 30 days. Please keep the label attached and send them back in the original box. Shall I start the return for you?',cta:'Send reply',alt:'Edit reply',done:'Reply sent.',altMsg:'Opens the chat in Conversations so you can edit the reply first.'},
+ {tag:'Out of stock · asked 17×',source:'Products',short:'Update Court Zero Low stock',title:'Court Zero Low is out of stock',body:'Shoppers asked about it 17 times. Ganes tells them it’s unavailable until you update the stock.',cta:'Update stock',alt:'Open product',done:'Court Zero Low stock updated.',altMsg:'Opens Court Zero Low in Products.'},
+ {tag:'Document failed',source:'Knowledge Base',short:'Fix Promo Cicilan.pdf',title:'“Promo Cicilan.pdf” couldn’t be read',body:'Ganes can’t answer installment questions until it’s fixed. Upload it again as a text PDF, not a scan.',cta:'Upload again',alt:'Why it failed',done:'Promo Cicilan.pdf uploaded again.',altMsg:'The file is a scanned image, so Ganes can’t read its text.'}
+];
+const HABIT={
+ morning:{head:'For your morning',why:'What you usually open before 11 am',list:[['Conversations','You usually open this in the morning'],['Products','Opened most mornings this month']]},
+ evening:{head:'For your evening',why:'What you usually open after 6 pm',list:[['Conversations','You usually check chats in the evening'],['Knowledge Base','Opened most evenings this month'],['Chatbot Settings','Often opened after 6 pm']]}
+};
+/* All menus = only what belongs to the chatbot on the client's website */
+const MENUS=[
+ {sec:'Daily work',items:[
+  ['Conversations','chat','Reply to shoppers, take over, mark resolved'],
+  ['Products','box','Catalogue, CSV upload, stock alerts'],
+  ['Knowledge Base','book','Files and web pages Ganes answers from']]},
+ {sec:'Test & improve',items:[
+  ['Chat Simulator','flask','Try questions before shoppers do'],
+  ['Answer Gaps','gap','Questions Ganes couldn’t answer',1],
+  ['Discovery Readiness','compass','Products Ganes suggests and promotes',1]]},
+ {sec:'Chatbot setup',items:[
+  ['Chatbot Settings','bot','Store info, company profile, persona & appearance, embed code'],
+  ['Chatbot Flow','flow','How the chatbot answers · view only'],
+  ['Add-ons','plug','Order tracking, promos & events, support tickets, live agent'],
+  ['AI Services','spark','API keys and usage for developers',1]]}
+];
+const TARGET={peace:'Ask Ganes by voice',thumb:'Conversations › Needs Attention',point:'Products › Stock alerts'};
+
+/* ---------- state ---------- */
+let S;
+function fresh(){
+  return {
+    sc:1, view:'home', setTab:'info', time:'morning',
+    mode:'setup', queue:[0,1,2,3], done:[], last:null, sub:null, subUsed:{},
+    tipSeen:false, tip:false,
+    menus:false, mq:'', prof:false,
+    query:'', voice:null,
+    g:{on:false, setup:false, mode:'idle', pose:null, p:0, cp:0, frozen:false, offReason:'', map:{peace:'voice',thumb:'na',point:'stock'}},
+    wiz:null,
+    suggest:'smart', notif:true,
+    ai:[], aiBusy:0, aiVoice:false,
+    toast:''
+  };
+}
+S=fresh();
+const timers=new Set();
+const later=(ms,fn)=>{const t=setTimeout(()=>{timers.delete(t);fn()},ms);timers.add(t);return t};
+function clearTimers(){timers.forEach(clearTimeout);timers.clear()}
+let toastT;
+function say(m,ms=2800){S.toast=m;render();clearTimeout(toastT);toastT=setTimeout(()=>{S.toast='';render()},ms)}
+
+/* ---------- scenario setup (presenter) ---------- */
+const SC=[
+ [1,'New owner','<b>New owner after onboarding.</b> Each step opens a <b>guided task</b>: one thing at a time, Next / Back / Cancel, type, upload or Speak. No tables or menus. The same features are also in <b>All menus</b> (full pages). Go through the 4 setup steps (failed document, test result, waiting for website, chatbot online). The <b>Speak instead of typing</b> tooltip shows once.'],
+ [2,'Returning owner','<b>Owner using Ganes for over a month.</b> Tasks replace the shortcuts while a task is open. <b>Edit reply</b>, <b>Update stock</b> and <b>Upload again</b> open a guided task (next, next, done). The full pages stay in <b>All menus</b> and Ask Ganes. Switch <b>Time of day</b> for morning vs evening.'],
+ [3,'Gesture control','<b>Gesture control on Home</b> (storyboard frames 1–6). Use <b>Gesture frames</b> to jump to a frame, or <b>Play flow</b> A/B/C. Live: hold <kbd class="k">V</kbd> <kbd class="k">U</kbd> <kbd class="k">O</kbd> for 0.8 s (or press and hold a chip), <kbd class="k">F</kbd> = fist cancels. Click the Ask field to see <b>Paused while typing</b>.'],
+ [4,'Gesture on/off','<b>Gesture Shortcuts are turned on in App Settings</b> (Andi ▾ › Home & gestures), not Chatbot Settings. First time: 2-minute setup <b>Camera check → Choose shortcuts → Practice → Done</b>. Sensitive menus can’t be assigned.'],
+ [5,'Voice','<b>Ask by voice.</b> Click <b>Speak</b>. The waveform from the Chat Menus POC moves while you speak; the question then goes to the AI Room. The tooltip disappears after first use.'],
+ [6,'All menus','<b>All menus</b> = only what belongs to the chatbot on the website, in 3 sections. Account, billing, team and gestures are in <b>App Settings</b> (Andi ▾).'],
+ [7,'Notifications','<b>Alerts are view-only for now.</b> The badge shows a count; the button can’t be clicked.'],
+ [8,'Profile & settings','<b>Profile & App Settings</b> use the Profile layout from the Chat Menus POC (summary left, tabs right).'],
+ [9,'Ask Ganes → AI Room','<b>Ask Ganes or search.</b> Type a question (e.g. <i>How many Jersey Tim Custom are left?</i>) and press <b>Enter</b>. Ganes answers in the AI Room. <b>Back to Home</b> returns.']
+];
+const GSHORT=[{id:'voice',short:'Ask Ganes',target:'Ask Ganes by voice'},{id:'na',short:'Needs Attention',target:'Conversations › Needs Attention'},{id:'stock',short:'Stock alerts',target:'Products › Stock alerts'},{id:'kb',short:'Knowledge Base',target:'Knowledge Base'},{id:'sim',short:'Chat Simulator',target:'Chat Simulator'},{id:'prod',short:'Products',target:'Products'}];
+const gsh=id=>GSHORT.find(x=>x.id===id);
+function setScenario(n){
+  if(typeof W!=='undefined'&&W){clearInterval(wT);W=null}
+  try{localStorage.removeItem('ax24-task')}catch(e){}
+  clearTimers();gStop();vxClose(true);camStop();clearTimeout(autoOffT);
+  const keepTip=S.tipSeen, time=S.time, gon=S.g.on, gset=S.g.setup, gmap=S.g.map;
+  S=fresh();S.sc=n;S.time=time;S.tipSeen=keepTip;S.g.map=gmap;
+  const ret=()=>{S.mode='tasks';S.queue=[0,1,2];S.done=[]};
+  if(n===1){S.tipSeen=false;S.tip=true}
+  if(n===2)ret();
+  if(n===3){ret();S.g.on=true;S.g.setup=true;S.g.mode='idle';S.tip=false;S.tipSeen=true;gArmAutoOff()}
+  if(n===4){ret();S.g.on=gon&&gset;S.g.setup=gset;S.view='settings';S.setTab='home'}
+  if(n===5){ret();S.tip=!keepTip}
+  if(n===6){ret();S.menus=true}
+  if(n===7){ret();S.pulse=true;later(5000,()=>{S.pulse=false;render()})}
+  if(n===8){ret();S.view='settings';S.setTab='info'}
+  if(n===9){ret();later(80,()=>{const i=$('#askIn');if(i)i.focus()})}
+  if(n!==1&&n!==5)S.tip=false;
+  if(S.g.on&&OPT.cam==='real')camStart();
+  render();
+}
+
+/* ---------- task logic (Option C) ---------- */
+function list(){return S.mode==='setup'?SETUP:TASKS}
+function curTask(){
+  if(!S.queue.length)return null;
+  const i=S.queue[0];let t=list()[i];
+  if(S.mode==='setup'&&S.sub)t=Object.assign({},t,SUBS[S.sub]);
+  return t;
+}
+function complete(){
+  if(!S.queue.length)return;
+  const idx=S.queue[0];
+  /* new owner: show the intermediate states from the storyboard once */
+  if(S.mode==='setup'&&!S.sub){
+    const sub={1:'failed',2:'result',3:'waiting'}[idx];
+    if(sub&&!S.subUsed[sub]){S.subUsed[sub]=1;S.sub=sub;S.last=null;
+      if(sub==='waiting')say('Embed code copied from Chatbot Settings › Appearance.');
+      render();return}
+  }
+  const t=curTask();S.sub=null;
+  S.queue.shift();S.done.push(idx);
+  const stamp=Date.now();S.last={idx,stamp,msg:t.done};
+  later(5000,()=>{if(S.last&&S.last.stamp===stamp){S.last=null;render()}});
+  render();
+}
+function alt(){
+  const t=curTask();if(!t)return;
+  if(S.sub==='failed'||S.sub==='result'){const m=t.altMsg;S.sub=null;const idx=S.queue.shift();S.done.push(idx);S.last={idx,stamp:Date.now(),msg:list()[idx].done};say(m);return}
+  say(t.altMsg);
+}
+function undo(){
+  const l=S.last;if(!l)return;
+  S.queue.unshift(l.idx);S.done=S.done.filter(d=>d!==l.idx);S.last=null;render();
+}
+function pushLater(){
+  if(S.queue.length<2)return;S.sub=null;S.queue.push(S.queue.shift());S.last=null;say('Moved to later. It’s now the last task today.');
+}
+
+/* ---------- render ---------- */
+function render(){
+  const tab=$('#tab');
+  const ae=document.activeElement, focusId=ae&&ae.id, selS=ae&&ae.selectionStart;
+  tab.innerHTML=header()+(W?guided():S.view==='home'?home():S.view==='ai'?aiRoom():settings())
+    +(S.menus?menusSheet():'')+(S.wiz?wizard():'')+gestureBar()+(S.toast?`<div class="toast" role="status">${esc(S.toast)}</div>`:'');
+  if(focusId){const el=document.getElementById(focusId);if(el){el.focus();if(selS!=null&&el.setSelectionRange)try{el.setSelectionRange(selS,selS)}catch(e){}}}
+  if(S.voice)vxMount();
+  if(S.view==='ai'){const l=$('#ail');if(l)l.scrollTop=l.scrollHeight}
+  const v=$('#camv');if(v&&camStream&&v.srcObject!==camStream){v.srcObject=camStream;v.play().catch(()=>{})}
+  pocSync();
+  const wv=$('#wzv');if(wv&&camStream&&wv.srcObject!==camStream){wv.srcObject=camStream;wv.play().catch(()=>{})}
+}
+
+function header(){
+   return`<header class="hd">
+  <button class="brand" data-a="home" type="button" aria-label="AX · GANES Home"><span class="logo" aria-hidden="true">g</span><span><b>AX · GANES</b><small>AI WORKSPACE</small></span></button>
+  <nav class="nav" aria-label="Main">
+    <span class="alerts${S.pulse?' pulse':''}" aria-disabled="true" title="Alerts can’t be opened yet">${ic('bell',20)}Alerts<span class="badge">1</span></span>
+    <button class="pill" data-a="menus" aria-expanded="${S.menus}" type="button">${ic('grid')}All menus</button>
+    <button class="pill me" data-a="prof" aria-expanded="${S.prof}" aria-haspopup="menu" type="button"><span class="av" aria-hidden="true">A</span>Andi${ic('down',16,2)}</button>
+    ${S.prof?profMenu():''}
+  </nav></header>`;
+}
+function profMenu(){
+  const it=(a,i,l,x='')=>`<button class="di" role="menuitem" data-a="${a}" type="button">${ic(i,18)}${l}${x?`<small>${x}</small>`:''}</button>`;
+  return`<div class="dd" role="menu" aria-label="Profile">
+   <div class="who"><span class="av" aria-hidden="true">A</span><span><b>Andi</b><small>Owner · Gelora Sport</small></span></div>
+   ${it('set:info','user','Profile & security')}
+   <div class="dh">APP SETTINGS</div>
+   ${it('set:home','hand','Home & gestures')}
+   ${it('set:bill','card','Billing & subscription')}
+   ${it('set:mem','team','Manage members')}
+   ${it('set:act','list','Team activity')}
+   ${it('set:acc','lock','Access control','TBD')}
+   <div class="dsep"></div>
+   ${it('help','help','Help')}
+   ${it('signout','out','Sign out')}
+  </div>`;
+}
+
+let lastCard='';
+function home(){
+  const isSetup=S.mode==='setup', L=list(), cur=curTask(), total=L.length, doneN=S.done.length, left=S.queue.length;
+  const showG=!isSetup&&S.g.on;
+  let hello,line;
+  if(isSetup){hello='Welcome, Andi · Gelora Sport.';line=left?`${left} ${left===1?'step':'steps'} until your chatbot is live.`:'Your chatbot is live.'}
+  else{hello=S.time==='evening'?'Good evening, Andi.':'Good morning, Andi.';line=left===0?'All clear for today.':left===1?'1 thing needs you today. I’ve prepared it.':`${left} things need you today. I’ve prepared each one.`}
+  const ordered=S.done.concat(S.queue);
+  const steps=ordered.map((idx,pos)=>{const t=L[idx],st=pos<doneN?'done':pos===doneN?'cur':'todo';
+    return`<li class="${st}"><span class="ring" aria-hidden="true">${st==='done'?`<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round">${P.check}</svg>`:''}</span><span><span class="l">${t.short}</span><span class="s">${st==='done'?'Done':st==='cur'?'Now':'Up next'} · ${t.source}</span></span></li>`}).join('');
+  const segs=Array.from({length:total},(_,i)=>`<span style="background:${i<doneN?A:(i===doneN&&left?'rgba(48,92,255,.3)':'#E6E8EC')}"></span>`).join('');
+  let doneBar='';
+  if(S.last){doneBar=`${ic('ccheck',18,2).replace('currentColor',A)}<b>${S.last.msg}</b><span class="nx">${cur?'Next: '+cur.short:(isSetup?'Setup complete.':'That was the last one.')}</span><button class="undo" data-a="undo" type="button">Undo</button>`}
+  let card;const ck=(cur?S.queue[0]+'-'+(S.sub||''):'clear')+S.mode, an=ck!==lastCard?' anim':'';lastCard=ck;
+  if(cur){
+    card=`<section class="card${an}" aria-label="Focus card" data-k="${S.queue[0]}-${S.sub||''}">
+     <div class="ctop"><span class="tag${cur.urgent?' urg':''}">${cur.tag}</span><span class="stp">Step ${doneN+1} of ${total}</span></div>
+     <h2>${cur.title}</h2><p>${cur.body}</p>
+     ${cur.draft?`<div class="draft"><div>GANES’S DRAFT</div><p>${cur.draft}</p></div>`:''}
+     <div class="acts"><button class="pri" data-a="complete" type="button">${cur.cta}</button><button class="sec" data-a="alt" type="button">${cur.alt}</button>
+     ${left>1&&!S.sub?`<span class="sepd" aria-hidden="true">·</span><button class="sec" data-a="later" type="button">Later</button>`:''}</div></section>`;
+  }else{
+    const h=isSetup?{head:'Optional next steps',why:'Do these whenever you like',list:[['Invite your team','Let staff reply to shoppers'],['Connect an add-on','Order tracking, promos, live agent']]}:HABIT[S.time];
+    card=`<section class="card${an}" aria-label="Focus card"><div class="clr"><span class="ck" aria-hidden="true">${ic('check',24,2.2).replace('currentColor',A)}</span><div><h2>${isSetup?'Your chatbot is online':'All clear for today'}</h2><p>${isSetup?'Shoppers on your website can chat with Ganes now.':'I’ll tell you if anything comes up.'}</p></div></div>
+     <div class="shh"><b>${h.head}</b><span>${h.why}</span></div>
+     <div class="shl">${h.list.map(([l,r])=>`<button class="shb" data-open="${esc(l)}" type="button"><span class="x"><b>${l}</b><small>${r}</small></span><span class="o">Open</span>${ic('right',16,2.2).replace('currentColor',A)}</button>`).join('')}</div></section>`;
+  }
+  return`<div class="bd">
+   <aside class="aside" aria-label="Task list">
+     <span class="cap">${isSetup?'Set up Gelora Sport':(cur?'Today':'Done today')}</span>
+     <span class="prog">${doneN} of ${total} done</span>
+     <div class="segs" aria-hidden="true">${segs}</div>
+     <ol class="steps">${steps}</ol>
+     ${showG?`<div class="lnks inl"><button class="tl" data-a="viewall" type="button">View all tasks</button><span class="sepd" aria-hidden="true">·</span><button class="tl" data-a="how" type="button">How it works</button></div>${gPanel()}`
+      :`<div class="lnks"><button class="tl" data-a="viewall" type="button">${isSetup?'View all setup steps':'View all tasks'}</button><button class="tl" data-a="how" type="button">How does this work?</button></div>`}
+   </aside>
+   <main class="main">
+     <span class="date">Monday, 19 October 2026</span>
+     <h1>${hello}</h1><p class="greet">${line}</p>
+     <div class="donebar" aria-live="polite">${doneBar}</div>
+     ${card}
+     ${askField('askIn','Ask Ganes or search…')}
+     ${S.voice?vxHtml():''}
+   </main></div>`;
+}
+function askField(id,ph){
+  const gl=S.g.on&&S.g.mode==='listen', lis=!!S.voice||gl, q=S.query.trim(), typ=S.g.on&&S.g.mode==='paused';
+  return`<div class="askw">
+   ${S.tip&&!lis&&S.view==='home'?`<div class="tip" role="note"><span>Speak instead of typing</span><button data-a="tipok" type="button">Got it</button></div>`:''}
+   <label for="${id}" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">${ph}</label>
+   <div class="ask${lis?' lis':typ?' typ':''}">${ic('search',20).replace('currentColor','#5D6676')}
+     <input id="${id}" type="text" autocomplete="off" enterkeyhint="send" value="${esc(S.query)}" placeholder="${lis?'Listening… say a question or a menu name':ph}">
+     ${q&&!gl?`<button class="askbtn" data-a="ask" type="button">Ask</button>`:`<button class="speak${lis?' on':''}" data-a="${gl?'gstop':'speak'}" aria-pressed="${lis}" type="button">${ic('mic',18,1.9)}${lis?'Stop':'Speak'}</button>`}
+   </div></div>`;
+}
+
+/* ---------- All menus ---------- */
+function menusSheet(){
+  const q=S.mq.trim().toLowerCase();let n=0;
+  const secs=MENUS.map(s=>{const items=s.items.filter(([l,,d])=>!q||(l+' '+d).toLowerCase().includes(q));if(!items.length)return'';
+    return`<section class="ms"><h4>${s.sec}</h4><div class="mg">${items.map(([l,i,d,tbd])=>`<button class="mi" style="--i:${n++}" data-open="${esc(l)}" type="button"><span class="ti">${ic(i,20)}</span><span class="x"><b>${l}${tbd?'<span class="tbd">TBD</span>':''}</b><small>${d}</small></span></button>`).join('')}</div></section>`}).join('');
+  return`<div class="scrim" data-a="menusx"></div>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="mh">
+   <div class="sh"><div><h3 id="mh">All menus</h3><p>Everything for the chatbot on your website.</p></div><span class="sp"></span><button class="close" data-a="menusx" type="button">Close</button></div>
+   <label class="msrch">${ic('search',18).replace('currentColor','#5D6676')}<input id="mq" placeholder="Find a menu…" value="${esc(S.mq)}" autocomplete="off" aria-label="Find a menu"></label>
+   <div class="sb">${secs||`<div class="empty">No menu matches “${esc(S.mq)}”. Try Ask Ganes instead.</div>`}</div>
+   <div class="sf">${ic('gear',20)}<span><b>Looking for account, billing, team or gestures?</b><br>They’re in App Settings, opened from your profile (Andi).</span><span class="sp"></span><button class="ghost" data-a="set:home" type="button">Open App Settings</button></div>
+  </div>`;
+}
+
+/* ---------- Settings (Profile layout from POC) ---------- */
+function settings(){
+  const T=[['info','Personal info'],['sec','Security'],['home','Home & gestures'],['bill','Billing'],['mem','Members'],['act','Team activity']];
+  const used=18400,lim=50000,p=Math.round(used/lim*100);
+  return`<div class="pg">
+   <button class="back" data-a="home" type="button">${ic('left',18,2)}Back to Home</button>
+   <div class="pgh"><h2>Profile & App Settings</h2><p>Your account and how the workspace works for you. Chatbot settings are in All menus.</p></div>
+   <div class="pfg">
+    <aside class="pnl pfl" aria-label="Account summary">
+     <span class="pfa" aria-hidden="true">A</span>
+     <div class="w"><h3>Andi</h3><small>Owner · Gelora Sport</small><small>andi@gelorasport.id</small></div>
+     <div class="pfk"><div><span>Member since</span><b>16 Sep 2026</b></div><div><span>Last active</span><b>Just now</b></div>
+      <div><span>Token quota</span><b>18.4K of 50K</b></div><div class="qb" role="progressbar" aria-label="Token quota used" aria-valuenow="${p}" aria-valuemin="0" aria-valuemax="100"><i style="width:${p}%"></i></div></div>
+     <div class="pfo"><button class="out" data-a="signout" type="button">Sign out</button></div>
+    </aside>
+    <section class="pnl svp" aria-label="Settings">
+     <div class="tabs" role="tablist">${T.map(([k,l])=>`<button role="tab" data-tab="${k}" aria-selected="${S.setTab===k}" type="button">${l}</button>`).join('')}</div>
+     <div class="tc">${setContent()}</div>
+    </section>
+   </div></div>`;
+}
+function setContent(){
+  const t=S.setTab;
+  if(t==='info')return`<div class="ff">
+    <div><label for="f1">Full name</label><input id="f1" value="Andi"></div>
+    <div><label for="f2">Email</label><input id="f2" value="andi@gelorasport.id"></div>
+    <div><label for="f3">Phone (optional)</label><input id="f3" placeholder="+62 8xx xxxx xxxx"></div>
+    <div><label for="f4">Time zone</label><select id="f4"><option>Asia/Jakarta (WIB)</option><option>Asia/Makassar (WITA)</option><option>Asia/Jayapura (WIT)</option></select></div>
+    <div><label for="f5">Role</label><input id="f5" value="Owner" readonly><small>Roles are managed in Members.</small></div>
+    <div><label for="f6">Workspace</label><input id="f6" value="Gelora Sport" readonly></div></div>`;
+  if(t==='sec')return`<div class="r2"><div><b>Password</b><small>Use at least 8 characters with a number.</small></div><button class="ghost" data-say="Opens Change password." type="button">Change password</button></div>
+    <div class="r2"><div><b>Two-factor authentication</b><small>Ask for a code from your authenticator app when you sign in.</small></div><button class="sw" role="switch" aria-checked="false" data-sw="tfa" type="button" aria-label="Two-factor authentication"></button></div>
+    <div class="sh2">Active sessions</div>
+    <div class="r2"><div><b>Chrome on macOS <span class="badge2">This device</span></b><small>Jakarta, ID · Active now</small></div></div>
+    <div class="r2"><div><b>Safari on iPad</b><small>Jakarta, ID · 2 hours ago</small></div><button class="ghost" data-say="Signed out of Safari on iPad." type="button">Sign out</button></div>`;
+  if(t==='home'){
+    const g=S.g.on, M=S.g.map;
+    return`<div class="sh2">Home suggestions</div>
+    <div class="r2"><div><b>Shortcuts when no task is left</b><small>Smart: menus you open at this time of day. Most used: last 30 days. Standard: fixed menu order.</small></div>
+     <div class="seg" role="group" aria-label="Home suggestions">${[['smart','Smart'],['most','Most used'],['std','Standard']].map(([k,l])=>`<button data-sg="${k}" aria-pressed="${S.suggest===k}" type="button">${l}</button>`).join('')}</div></div>
+    <div class="sh2">Gesture Shortcuts</div>
+    <div class="r2"><div><b id="gl">Gesture Shortcuts on Home</b><small>Open shortcuts with hand poses through the camera. Video stays on this device and is never recorded.</small></div>
+     ${S.g.setup?`<button class="sw" role="switch" aria-checked="${g}" aria-labelledby="gl" data-a="gtoggle" type="button"></button>`:`<button class="ghost" data-a="gwiz" type="button">Set up · 2 min</button>`}</div>
+    ${S.g.setup?`<div class="poses">${['peace','thumb','point'].map(k=>`<div class="pose">${handSvg(k,34,A)}<span><b>${POSES[k][1]}</b><small>${gsh(M[k]).target}</small></span></div>`).join('')}<div class="pose">${handSvg('fist',34)}<span><b>Fist</b><small>Cancel a shortcut</small></span></div></div>
+     <div class="r2"><div><b>Shortcuts</b><small>Billing, Manage Members, Settings and Log out can’t be assigned to a gesture.</small></div><button class="ghost" data-a="gedit" type="button">Edit shortcuts</button></div>
+     <div class="r2"><div><b>Safety</b><small>Paused while typing · off after 60 s without a hand · camera stops when the tab isn’t active.</small></div></div>`:''}
+    <div class="sh2">Voice</div>
+    <div class="r2"><div><b>Speak button in Ask Ganes</b><small>Ask questions or open menus by voice.</small></div><button class="sw" role="switch" aria-checked="true" disabled type="button" aria-label="Speak button"></button></div>`;
+  }
+  const name={bill:'Billing / Subscriptions',mem:'Manage Members',act:'Team Activity'}[t];
+  return`<div class="note"><b>${name}</b><br>Same content as ganes_saas › App Settings › ${name}. Not part of this Home prototype.</div>`;
+}
+
+/* ---------- AI Room (POC) ---------- */
+const aiTime=()=>{const d=new Date();return d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})};
+function aiAnswer(t){
+  const s=t.toLowerCase(),h=r=>r.test(s);
+  if(h(/jersey|stock|stok|left|sisa|habis/)&&!h(/court/))return{text:'Jersey Tim Custom has 3 left. It’s on your low-stock list.\nCourt Zero Low is out of stock and shoppers asked about it 17 times.',acts:[['Open Stock alerts','Products › Stock alerts','p'],['Update Court Zero Low','Products › Court Zero Low','']]};
+  if(h(/court/))return{text:'Court Zero Low is out of stock. Shoppers asked about it 17 times. Ganes tells them it’s unavailable until you update the stock.',acts:[['Update stock','Products › Court Zero Low','p']]};
+  if(h(/return|retur|refund|tukar/))return{title:'Return policy',text:'From “Kebijakan Retur.pdf”: returns within 30 days, label attached, original box.\n1 shopper is waiting for a reply about this right now.',acts:[['Reply to the shopper','Conversations › Needs Attention','p'],['Open Knowledge Base','Knowledge Base','']]};
+  if(h(/customer|waiting|chat|conversation|percakapan|pelanggan/))return{text:'1 shopper has been waiting 12 minutes: “Can I return shoes that are too small?” Ganes drafted a reply from your return policy.',acts:[['Open Needs Attention','Conversations › Needs Attention','p']]};
+  if(h(/install|cicilan|promo|document|dokumen|pdf/))return{text:'“Promo Cicilan.pdf” couldn’t be read because it’s a scanned image. Upload it again as a text PDF so Ganes can answer installment questions.',acts:[['Upload again','Knowledge Base › Promo Cicilan.pdf','p']]};
+  if(h(/bill|tagih|invoice|plan|paket|member|anggota|team|tim|password|gesture|profile|profil|account|akun/))return{text:'That’s in App Settings. Open it from your profile button (Andi ▾).',acts:[['Open App Settings','@settings','p']]};
+  if(h(/menu|what can|help|bantu|fitur/))return{title:'All menus',text:'Pick a page to open.',acts:MENUS.flatMap(m=>m.items).map(([l])=>['Open '+l,l,''])};
+  if(h(/test|simulat|uji/))return{text:'Run a test in Chat Simulator to see how Ganes answers your shoppers.',acts:[['Open Chat Simulator','Chat Simulator','p']]};
+  return{text:`I got your message: “${t}”.\nThis is a sample answer in the prototype. In the product, Ganes answers from your store data.`,sug:['How many Jersey Tim Custom are left?','What is my return policy?','Show all menus']};
+}
+function aiSend(t,byVoice){
+  t=t.trim();if(!t)return;
+  S.ai.push({r:'u',t,time:aiTime(),voice:byVoice});S.aiBusy++;S.view='ai';S.query='';S.menus=false;S.prof=false;
+  render();
+  later(900,()=>{S.aiBusy--;S.ai.push(Object.assign({r:'a',time:aiTime()},aiAnswer(t)));render()});
+}
+function aiRoom(){
+  const u=m=>`<div class="aiu">${esc(m.t)}<small>${m.voice?'By voice · ':''}You · ${m.time}</small></div>`;
+  const a=m=>`<div class="aia"><span class="aiav sm" aria-hidden="true">g</span><div class="aic">${m.title?`<h4>${esc(m.title)}</h4>`:''}<p>${esc(m.text)}</p>
+   ${m.acts?`<div class="btns">${m.acts.map(([l,go,c])=>`<button class="ab ${c}" data-open="${esc(go)}" type="button">${esc(l)}</button>`).join('')}</div>`:''}
+   ${m.sug?`<div class="btns">${m.sug.map(x=>`<button class="ab" data-sug="${esc(x)}" type="button">${esc(x)}</button>`).join('')}</div>`:''}
+   ${m.time?`<time>${m.time}</time>`:''}</div></div>`;
+  return`<div class="ai" style="position:relative">
+   <div class="aih"><button class="back" data-a="home" type="button">${ic('left',18,2)}Back to Home</button><span class="aiav" aria-hidden="true">g</span><div><b>Ganes Assistant</b><small><i></i>Online · answers from Gelora Sport data</small></div></div>
+   <div class="ail" id="ail" role="log" aria-live="polite">
+    ${S.ai.length?'':a({title:'Hi Andi, how can I help?',text:'Ask anything about your store, or pick one below.',sug:['How many Jersey Tim Custom are left?','What is my return policy?','Show all menus']})}
+    ${S.ai.map(m=>m.r==='u'?u(m):a(m)).join('')}
+    ${S.aiBusy?`<div class="aia"><span class="aiav sm" aria-hidden="true">g</span><div class="aic"><div class="aid" role="status" aria-label="Ganes is typing"><i></i><i></i><i></i></div></div></div>`:''}
+   </div>
+   ${askField('aiIn','Ask a follow-up…')}
+   ${S.voice?vxHtml():''}
+  </div>`;
+}
+
+/* ---------- Voice (waveform from AX_GANES_Chat_Menus_POC) ---------- */
+const OPT={voice:'sim',cam:'sim'};
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+let vRec=null,vGen=0,vRaf=0,vLv=0,vTgt=0,vStream=null,vAC=null,vAn=null,vBuf=null;
+const SIM_Q='How many Jersey Tim Custom are left?';
+function vxHtml(){
+  const v=S.voice;
+  return`<div class="vx" role="group" aria-label="Ask by voice">
+   <p class="vx-say${v.dim?' dim':''}" id="vxsay" role="status" aria-live="polite">${esc(v.text)}</p>
+   <canvas class="vx-cv" id="vxcv" aria-hidden="true"></canvas>
+   <div class="vx-src">${v.src}</div>
+   <div class="vx-ctl">
+    <button class="vbtn" data-a="vagain" type="button">${ic('redo',16,2)}Speak again</button>
+    <button class="vbtn p" data-a="vdone" type="button" ${v.idle?'disabled':''}>${ic('stop',16,2)}Done</button>
+    <button class="vbtn" data-a="vcancel" type="button">${ic('x',16,2)}Cancel</button>
+   </div></div>`;
+}
+function vxOpen(src){
+  S.tip=false;S.tipSeen=true;S.menus=false;S.prof=false;
+  S.voice={text:'What can I help you with?',dim:false,idle:false,src:src||'Started with the Speak button'};
+  render();vListen();
+}
+function vxMount(){cancelAnimationFrame(vRaf);vRaf=requestAnimationFrame(vLoop)}
+function vxClose(silent){
+  vGen++;if(vRec){try{vRec.abort()}catch(e){}vRec=null}
+  if(vStream)vStream.getTracks().forEach(t=>t.stop());if(vAC)vAC.close().catch(()=>{});vStream=vAC=vAn=vBuf=null;
+  cancelAnimationFrame(vRaf);
+  if(S.voice){S.voice=null;if(!silent)render()}
+}
+function vText(t,dim){if(!S.voice)return;S.voice.text=t;S.voice.dim=!!dim;const e=$('#vxsay');if(e){e.textContent=t;e.classList.toggle('dim',!!dim)}}
+async function vMicOn(){
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia)return;
+  try{const st=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true}});
+    if(!S.voice){st.getTracks().forEach(t=>t.stop());return}
+    vStream=st;vAC=new(window.AudioContext||window.webkitAudioContext)();vAn=vAC.createAnalyser();vAn.fftSize=512;vBuf=new Uint8Array(vAn.fftSize);vAC.createMediaStreamSource(st).connect(vAn);
+  }catch(e){}
+}
+function vMic(){if(!vAn)return 0;vAn.getByteTimeDomainData(vBuf);let q=0;for(const x of vBuf){const d=(x-128)/128;q+=d*d}return Math.min(1,Math.sqrt(q/vBuf.length)*5)}
+function vListen(){
+  if(!S.voice)return;
+  vGen++;const g=vGen;if(vRec){try{vRec.abort()}catch(e){}vRec=null}
+  S.voice.idle=false;vText('What can I help you with?');render();
+  const real=OPT.voice==='real'&&SR;
+  if(!real){ /* simulated speech: words appear as if spoken */
+    const words=SIM_Q.split(' ');let i=0;
+    const step=()=>{if(g!==vGen||!S.voice)return;i++;vTgt=.75;vText(words.slice(0,i).join(' '));if(i<words.length)later(260,step);else later(900,()=>{if(g===vGen&&S.voice)vFinish(SIM_Q)})};
+    later(1100,step);return;
+  }
+  vMicOn();let txt='',err='';
+  const r=vRec=new SR();r.lang='en-US';r.interimResults=true;
+  r.onresult=ev=>{txt=[...ev.results].map(x=>x[0].transcript).join(' ');vText(txt);vTgt=Math.max(vTgt,.6)};
+  r.onerror=ev=>{err=ev.error};
+  r.onend=()=>{if(g!==vGen)return;vRec=null;const t=txt.trim();if(t){vFinish(t);return}
+    S.voice.idle=true;render();
+    vText(err==='not-allowed'||err==='service-not-allowed'?'Microphone permission was blocked. Allow it in the browser, then try again.':err&&err!=='no-speech'&&err!=='aborted'?'The microphone can’t be reached. Try again.':'No voice heard. Try again.',true)};
+  try{r.start()}catch(e){S.voice.idle=true;vText('The microphone can’t be reached. Try again.',true)}
+}
+function vFinish(t){vxClose(true);aiSend(t,true)}
+function vLoop(ts){
+  if(!S.voice)return;vRaf=requestAnimationFrame(vLoop);
+  const t=matchMedia('(prefers-reduced-motion:reduce)').matches?0:ts/1000;
+  if(!S.voice.idle)vTgt=Math.max(vAn?vMic():.12+.08*Math.sin(t*3.1)*Math.sin(t*1.3),vTgt*.93);else vTgt=0;
+  vLv+=(vTgt-vLv)*(vTgt>vLv?.3:.07);vDraw(t);
+}
+function vDraw(t){
+  const cv=$('#vxcv');if(!cv)return;const cw=cv.clientWidth,ch=cv.clientHeight;if(cw<2||ch<2)return;
+  const dpr=Math.min(devicePixelRatio||1,2),pw=Math.round(cw*dpr),ph=Math.round(ch*dpr);
+  if(cv.width!==pw||cv.height!==ph){cv.width=pw;cv.height=ph}
+  const c=cv.getContext('2d');c.setTransform(dpr,0,0,dpr,0,0);c.clearRect(0,0,cw,ch);
+  const mid=ch/2,amp=S.voice.idle?.08:.1+.9*Math.min(1,vLv*1.4);
+  const cs=getComputedStyle(cv.parentNode),w1=cs.getPropertyValue('--vw1').trim(),w2=cs.getPropertyValue('--vw2').trim(),wf=cs.getPropertyValue('--vwf').trim(),ws=cs.getPropertyValue('--vws').trim();
+  const g=c.createLinearGradient(0,0,cw,0);
+  g.addColorStop(0,'rgba(120,140,255,0)');g.addColorStop(.22,w1);g.addColorStop(.5,w2);g.addColorStop(.78,w1);g.addColorStop(1,'rgba(120,140,255,0)');
+  c.lineWidth=1;c.strokeStyle=g;c.globalAlpha=.55;c.beginPath();c.moveTo(0,mid);c.lineTo(cw,mid);c.stroke();
+  for(let k=0;k<5;k++){
+    const phs=t*(1.1+k*.45)+k*1.7,fr=2.2+k*.9,a=(1-k*.14)*amp*ch*.36,pts=[];
+    for(let x=0;x<=cw;x+=4){const n=x/cw,env=Math.exp(-Math.pow((n-.5)*3.4,2));pts.push([x,Math.sin(n*fr*3.1416+phs)*env*a])}
+    c.shadowBlur=0;c.globalAlpha=1;c.fillStyle=wf;c.beginPath();c.moveTo(0,mid);pts.forEach(([x,y])=>c.lineTo(x,mid-y));c.lineTo(cw,mid);c.closePath();c.fill();
+    c.strokeStyle=g;c.shadowColor=ws;c.shadowBlur=10;c.lineWidth=1.5-k*.12;
+    c.globalAlpha=.95-k*.14;c.beginPath();pts.forEach(([x,y],i)=>i?c.lineTo(x,mid-y):c.moveTo(x,mid-y));c.stroke();
+    c.globalAlpha=.3-k*.04;c.beginPath();pts.forEach(([x,y],i)=>i?c.lineTo(x,mid+y*.45):c.moveTo(x,mid+y*.45));c.stroke();
+  }
+  c.globalAlpha=1;c.shadowBlur=0;
+}
+
+/* ---------- Gestures (storyboard frames 1–6 · Gesture.dc.html) ---------- */
+const POSES={peace:['Ask Ganes','V sign','V'],thumb:['Needs Attention','Thumb up','U'],point:['Stock alerts','One finger','O']};
+let holdI=0,confI=0,autoOffT=0;
+const gTarget=p=>gsh(S.g.map[p]).target, gShort=p=>gsh(S.g.map[p]).short;
+function gStop(){clearInterval(holdI);clearInterval(confI)}
+function gLive(){if(S.g.frozen){S.g.frozen=false;clearTimers()}}
+function gArmAutoOff(){clearTimeout(autoOffT);if(!S.g.on)return;autoOffT=setTimeout(gAutoOff,60000)}
+function gAutoOff(){const g=S.g;if(!g.on||!['idle','cancelled'].includes(g.mode))return;gStop();g.mode='off';g.offReason='auto';g.pose=null;camStop();render()}
+function gPress(pose){
+  const g=S.g;if(!g.on||S.view!=='home'||S.mode!=='tasks')return;gLive();
+  if(['off','paused','confirm','listen','tab'].includes(g.mode))return;
+  if(g.mode==='hold'&&g.pose===pose)return;
+  gStop();g.mode='hold';g.pose=pose;g.p=0;render();gArmAutoOff();
+  holdI=setInterval(()=>{g.p+=40/800;if(g.p>=1){clearInterval(holdI);gConfirm(pose)}else gPaint()},40);
+}
+function gRelease(){const g=S.g;if(g.mode!=='hold'||g.frozen)return;gStop();g.mode='idle';g.pose=null;g.p=0;render()}
+function gConfirm(pose){
+  const g=S.g;g.mode='confirm';g.p=1;g.cp=0;render();
+  confI=setInterval(()=>{g.cp+=40/1000;if(g.cp>=1){clearInterval(confI);gRun(pose)}else gPaint()},40);
+}
+function gRun(pose){
+  const g=S.g;
+  if(S.g.map[pose]==='voice'){gListen();return}
+  g.mode='idle';g.pose=null;g.p=0;g.cp=0;say('Opens '+gTarget(pose)+'.');if(!g.frozen)later(900,()=>goPage(gTarget(pose)));
+}
+/* frame 3: Ask field listens, Ganes answers, Home returns to normal */
+function gListen(){
+  const g=S.g;g.mode='listen';g.pose=null;g.p=0;g.cp=0;S.query='';render();
+  const Q='How many Jersey Tim Custom are left?';
+  const done=t=>{if(S.g.mode!=='listen')return;S.query=t;render();later(700,()=>{if(S.g.mode!=='listen')return;S.g.mode='idle';S.query='';say('Ganes: Jersey Tim Custom has 3 left. It’s on your low-stock list.',4500);gArmAutoOff()})};
+  if(OPT.voice==='real'&&SR){
+    let txt='';const r=new SR();r.lang='en-US';r.interimResults=true;g.rec=r;
+    r.onresult=ev=>{txt=[...ev.results].map(x=>x[0].transcript).join(' ');S.query=txt;render()};
+    r.onend=()=>{g.rec=null;if(txt.trim())done(txt.trim());else if(S.g.mode==='listen'){S.g.mode='idle';S.query='';say('No voice heard. Try again.')}};
+    try{r.start()}catch(e){done(Q)}return;
+  }
+  const w=Q.split(' ');let i=0;const step=()=>{if(S.g.mode!=='listen')return;i++;S.query=w.slice(0,i).join(' ');render();if(i<w.length)later(260,step);else done(Q)};later(900,step);
+}
+function gStopListen(){const g=S.g;if(g.rec){try{g.rec.stop()}catch(e){}return}if(g.mode==='listen'){g.mode='idle';S.query='';render()}}
+function gCancel(){
+  const g=S.g;if(g.mode!=='confirm')return;gStop();g.mode='cancelled';render();
+  later(2500,()=>{if(S.g.mode==='cancelled'&&!S.g.frozen){S.g.mode='idle';S.g.pose=null;render()}});
+}
+function gPaint(){
+  const g=S.g;
+  document.querySelectorAll('.gs .chip').forEach(c=>{const on=c.dataset.pose===g.pose&&['hold','confirm'].includes(g.mode);c.classList.toggle('on',on);const b=c.querySelector('.bar');if(b)b.style.width=(on?(g.mode==='hold'?Math.round(g.p*100):100):0)+'%'});
+  const b=$('.gbar .bar');if(b)b.style.width=Math.round(g.cp*100)+'%';
+}
+function gPanel(){
+  const g=S.g,m=g.mode;
+  const st={idle:['Gestures on','Camera on · watching for a pose'],hold:['Hold still…','Keep the pose for 0.8 s'],confirm:['Opening…','Make a fist to cancel'],listen:['Listening','Started by V sign'],cancelled:['Cancelled','Nothing was opened'],paused:['Paused while typing','Resumes when you stop typing'],tab:['Paused','Tab not active · camera off'],off:['Gestures off',g.offReason==='auto'?'No hand seen for 60 s · camera off':'Camera off']}[m];
+  const gray=['paused','tab','off'].includes(m), off=m==='off', dim=['paused','listen','tab'].includes(m);
+  const chip=k=>{const on=g.pose===k&&['hold','confirm'].includes(m);const w=on?(m==='hold'?Math.round(g.p*100):100):0;
+    return`<button class="chip${on?' on':''}" data-pose="${k}" type="button">${handSvg(k,32,on?A:'#344054')}<span class="x"><b>${gShort(k)}</b><small>${POSES[k][1]}</small></span><span class="bar" style="width:${w}%"></span></button>`};
+  return`<div class="gs" aria-label="Gesture shortcuts">
+   <div class="st"><i class="${gray?'g':''}" aria-hidden="true"></i><b>${st[0]}</b>${off?'':`<button data-a="goff" type="button">Turn off</button>`}</div>
+   <span class="sub">${st[1]}</span>
+   ${off?`<button class="on" data-a="gon" type="button">Turn gestures on</button>`:`
+   <div class="chs${dim?' dim':''}">${chip('peace')}${chip('thumb')}${chip('point')}</div>
+   ${OPT.cam==='real'?`<div class="camt"><video id="camv" muted playsinline></video><span id="camst">${camStatus}</span></div>`:''}
+   <div class="hnt">${handSvg('fist',18,'#5D6676')}Hold a pose 0.8 s · make a fist to cancel</div>`}
+  </div>`;
+}
+function gestureBar(){
+  const g=S.g;if(!g.on||S.view!=='home'||!['confirm','cancelled'].includes(g.mode))return'';
+  const can=g.mode==='cancelled', tgt=g.pose?gTarget(g.pose):'';
+  return`<div class="gbar" role="status"><span class="ic${can?' g':''}">${handSvg(can?'fist':g.pose,38,can?'#344054':A)}</span>
+   <span class="x"><b>${can?'Cancelled':'Opening '+tgt+'…'}</b><small>${can?tgt+' didn’t open.':'Make a fist or tap Cancel to stop'}</small></span>
+   ${can?'':`<button class="cn" data-a="gcancel" type="button">Cancel</button>`}
+   <span class="bar" style="width:${can?0:Math.round(g.cp*100)}%"></span></div>`;
+}
+/* storyboard frames (static) */
+const GFR=[['G1 · Hold pose',()=>{S.g.mode='hold';S.g.pose='peace';S.g.p=.6}],['G2 · Confirm 1 s',()=>{S.g.mode='confirm';S.g.pose='peace';S.g.cp=.45}],
+ ['G3 · Ask by voice',()=>{S.g.mode='listen';S.query='How many Jersey Tim Custom are left?'}],['G4 · Fist cancels',()=>{S.g.mode='cancelled';S.g.pose='thumb'}],
+ ['G5 · Paused while typing',()=>{S.g.mode='paused';S.query='return policy for sho'}],['G6 · Auto-off 60 s',()=>{S.g.mode='off';S.g.offReason='auto'}]];
+function gFrame(i){
+  if(S.sc!==3)setScenario(3);
+  clearTimers();gStop();clearTimeout(autoOffT);
+  Object.assign(S.g,{on:true,setup:true,mode:'idle',pose:null,p:0,cp:0,frozen:true});S.query='';S.view='home';S.menus=false;S.prof=false;
+  GFR[i][1]();S.gf=i;render();
+}
+function gFlow(k){
+  if(S.sc!==3)setScenario(3);
+  clearTimers();gStop();Object.assign(S.g,{on:true,setup:true,mode:'idle',pose:null,p:0,cp:0,frozen:false});S.query='';S.view='home';S.gf=null;render();
+  const pose={A:'peace',B:'thumb',C:'point'}[k];
+  later(500,()=>gPress(pose));
+  if(k==='B')later(500+800+450,()=>gCancel());
+}
+/* ---------- Real camera (MediaPipe Gesture Recognizer) ---------- */
+let camStream=null,recog=null,camLoopOn=false,camStatus='Starting camera…',lastPose=null;
+async function camStart(){
+  if(camStream)return;
+  try{
+    camStatus='Starting camera…';
+    camStream=await navigator.mediaDevices.getUserMedia({video:{width:320,height:240}});
+    render();
+    if(!recog){
+      camStatus='Loading hand model…';render();
+      const v=await import('https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/vision_bundle.mjs');
+      const fs=await v.FilesetResolver.forVisionTasks('https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm');
+      recog=await v.GestureRecognizer.createFromOptions(fs,{baseOptions:{modelAssetPath:'https://storage.googleapis.com/mediapipe-models/gesture_recognizer/gesture_recognizer/float16/1/gesture_recognizer.task'},runningMode:'VIDEO',numHands:1});
+    }
+    camStatus='Show your hand';render();camLoopOn=true;camLoop();
+  }catch(e){camStop();OPT.cam='sim';pocSync();say('Camera or hand model not available here. Using simulated gestures (keys).',4000)}
+}
+function camStop(){camLoopOn=false;if(camStream)camStream.getTracks().forEach(t=>t.stop());camStream=null}
+function camLoop(){
+  if(!camLoopOn)return;requestAnimationFrame(camLoop);
+  const v=$('#camv');if(!v||v.readyState<2||!recog)return;
+  if(!S.g.on||S.g.frozen||['off','paused','listen','tab'].includes(S.g.mode))return;
+  let r;try{r=recog.recognizeForVideo(v,performance.now())}catch(e){return}
+  const has=r.landmarks&&r.landmarks.length;
+  const name=has&&r.gestures[0]&&r.gestures[0][0]&&r.gestures[0][0].score>.6?r.gestures[0][0].categoryName:'None';
+  const pose={Victory:'peace',Thumb_Up:'thumb',Pointing_Up:'point',Closed_Fist:'fist'}[name]||null;
+  const st=$('#camst');if(st)st.textContent=has?(pose?POSES[pose]?POSES[pose][1]:'Fist':'Hand seen'):'Show your hand';
+  if(!has){if(S.g.mode==='hold')gRelease();lastPose=null;return}
+  gArmAutoOff();
+  if(pose==='fist'){if(S.g.mode==='confirm')gCancel();else if(S.g.mode==='hold')gRelease();lastPose=pose;return}
+  if(pose&&pose!==lastPose)gPress(pose);
+  if(!pose&&S.g.mode==='hold')gRelease();
+  lastPose=pose;
+}
+
+/* ---------- v2.2: menus open their own page (POC flow & UI) ---------- */
+const PAGE={'Conversations':'conversations','Needs Attention':'conversations','Chat Simulator':'chat-simulator','Knowledge Base':'knowledge-base','Products':'products','Stock alerts':'products','Court Zero Low':'products','Members':'members','Manage members':'members','Invite your team':'members','Discovery Readiness':'discovery-readiness','Chatbot Flow':'chatbot-flow','Add-ons':'add-ons','Connect an add-on':'add-ons','AI Services':'ai-service','AI Service':'ai-service','Billing':'billing','Chatbot Settings':'settings','Settings':'settings','Profile':'profile'};
+function pageFor(name){const n=String(name).replace(/^Open /,'');const parts=n.split(' › ');for(const k of [n,...parts.slice().reverse(),parts[0]]){if(PAGE[k])return PAGE[k]}return null}
+function goPage(name){const p=pageFor(name);if(!p){say(String(name).replace(/^Open /,'')+' is [TBD] in this prototype.');return}
+  saveHome();
+  location.href=p+'.html'}
+
+/* ---------- v2.4: tasks open the operational menu; finishing there completes the task ---------- */
+const TASKMAP={
+ 'setup:0::complete':['products','','product_saved','Add your products','Click Add Product, then save 1 product (Manual Entry or Import CSV).','Products saved.'],
+ 'setup:0::alt':['products','','product_saved','Add your products','Click Add Product › Add one product and save it.','Products saved.'],
+ 'setup:1::complete':['knowledge-base','','selesai diparse','Add your store documents','Click Add Files, upload a document, then click Parse on it.','Documents processed.'],
+ 'setup:1::alt':['knowledge-base','','selesai diparse','Add a web page','Click Add Files › URL, add a link, then click Parse on it.','Web page processed.'],
+ 'setup:1:failed:complete':['knowledge-base','','selesai diparse','Upload Promo Cicilan.pdf again','Upload a text PDF version, then click Parse on it.','Documents processed.'],
+ 'setup:2::complete':['chat-simulator','','sim_reply','Test your chatbot','Click a test scenario on the right to run a test.','Test finished.'],
+ 'setup:2::alt':['chat-simulator','','sim_reply','Test your chatbot','Run one of the sample questions on the right.','Test finished.'],
+ 'setup:2:result:complete':['knowledge-base','','selesai diparse|Chunk (ditambahkan|disimpan)','Add 2 answers','Add answers for installments and Bekasi delivery: edit a chunk or add a file and Parse.','Answers added.'],
+ 'setup:3::complete':['settings','set-appearance','Snippet copied','Put the chatbot on your website','Copy the embed code, then paste it into your website.','Embed code copied.'],
+ 'tasks:0::alt':['conversations','','Ditandai selesai','Reply to the waiting customer','Open Rina Kusuma’s chat, reply, then click Mark as resolved.','Customer replied.'],
+ 'tasks:1::complete':['products','','diperbarui','Update Court Zero Low stock','Click edit on Court Zero Low, set the new stock and save.','Court Zero Low stock updated.'],
+ 'tasks:1::alt':['products','','diperbarui','Update Court Zero Low stock','Open Court Zero Low, update it and save.','Court Zero Low stock updated.'],
+ 'tasks:2::complete':['knowledge-base','','selesai diparse','Fix Promo Cicilan.pdf','Upload Promo Cicilan as a text PDF, then click Parse on it.','Promo Cicilan.pdf processed.']
+};
+const taskKey=a=>S.queue.length?`${S.mode}:${S.queue[0]}:${S.sub||''}:${a}`:'';
+function saveHome(){try{localStorage.setItem('ax24-state',JSON.stringify({sc:S.sc,time:S.time,tipSeen:S.tipSeen,mode:S.mode,queue:S.queue,done:S.done,sub:S.sub,subUsed:S.subUsed,g:{on:S.g.on,setup:S.g.setup,map:S.g.map}}))}catch(e){}}
+function goTask(a){
+  const k=taskKey(a),m=TASKMAP[k];if(!m)return false;
+  const L=list();saveHome();
+  try{localStorage.setItem('ax24-task',JSON.stringify({key:k,page:m[0],hash:m[1],expect:m[2],title:m[3],hint:m[4],doneMsg:m[5],step:`STEP ${S.done.length+1} OF ${L.length}`}))}catch(e){}
+  location.href=m[0]+'.html';return true;
+}
+
+/* ---------- v2.5: Guided task (to-do list → next, next, done; no tables, no menus) ---------- */
+const IC2={box:P.box,doc:P.book,link:'<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',csv:P.list,up:'<path d="M12 16V4"/><path d="M7 9l5-5 5 5"/><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/>',mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>',code:'<path d="M8 8l-4 4 4 4"/><path d="M16 8l4 4-4 4"/>'};
+const ic2=(n,sz=20)=>`<svg aria-hidden="true" width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${IC2[n]}</svg>`;
+const fld=(k,lab,ph,o={})=>`<div class="gt-f"><label for="gt-${k}">${lab}</label><div class="gt-in">${o.area?`<textarea id="gt-${k}" data-bind="${k}" placeholder="${ph}">${esc(W.d[k]||'')}</textarea>`:`<input id="gt-${k}" data-bind="${k}" type="${o.type||'text'}" inputmode="${o.type==='number'?'numeric':'text'}" placeholder="${ph}" value="${esc(W.d[k]||'')}">`}<button class="speak${W.lis===k?' on':''}" data-gspeak="${k}" type="button">${ic('mic',16,1.9)}${W.lis===k?'Listening…':'Speak'}</button></div></div>`;
+const choice=(k,opts)=>`<div class="gt-ch">${opts.map(([v,i,t,sub])=>`<button data-gch="${k}:${v}" aria-pressed="${W.d[k]===v}" type="button"><span class="ti">${ic2(i)}</span><span><b>${t}</b><small>${sub}</small></span></button>`).join('')}</div>`;
+const drop=(k,sample,label)=>`<div class="gt-drop">${ic2('up',28)}<b>${label}</b>Drag a file here or choose one.<div class="acts"><button class="ghost" data-gfile="${k}" type="button">Choose file</button><button class="sec" data-gsample="${k}" type="button">Use sample: ${sample.join(', ')}</button></div></div>
+ ${W.d[k]&&W.d[k].length?`<div class="gt-file">${W.d[k].map(f=>`<div>${ic2('doc',18)}<span>${esc(f)}</span><em>Ready</em></div>`).join('')}</div>`:''}<input type="file" id="gt-fi" hidden ${k==='files'?'multiple':''}>`;
+const prog=(txt)=>`<div class="gt-prog"><div class="bar"><i id="gtbar" style="width:${Math.round((W.d.p||0)*100)}%"></i></div><p id="gtpt">${txt}</p></div>`;
+const done=(t,sub)=>`<div class="gt-ok"><span class="ck">${ic('check',26,2.2).replace('currentColor',A)}</span><div><h2>${t}</h2><p style="margin:4px 0 0;color:var(--t3);font-size:16px">${sub}</p></div></div>`;
+const kv=rows=>`<div class="gt-kv">${rows.map(([a,b])=>`<div><span>${a}</span><b>${esc(b)}</b></div>`).join('')}</div>`;
+const idr=n=>'Rp '+(+n||0).toLocaleString('id-ID');
+/* auto step: runs a progress, then moves on */
+const auto=(ms,txt)=>({auto:ms,next:null,body:()=>prog(txt)});
+const WIZ={
+ products:{title:'Add your products',msg:'Products saved.',steps:d=>[
+  {t:'How do you want to add products?',p:'Pick one. You can add more later in Products.',body:()=>choice('method',[['one','box','Add one product','Type the details step by step.'],['csv','csv','Upload a CSV','Many products at once from a spreadsheet.']]),ok:()=>!!d.method},
+  ...(d.method==='csv'?[
+   {t:'Upload your CSV file',p:'Columns: SKU, name, category, price, stock.',body:()=>drop('csv',['gelora-products.csv'],'Upload CSV'),ok:()=>d.csv&&d.csv.length},
+   {t:'Checking your file…',p:'Ganes reads every row.',...auto(1800,'Reading rows…')},
+   {t:'6 products are ready',p:'No errors found.',body:()=>kv([['Products','6'],['New','6'],['Errors','0'],['Examples','Pacer Lite 2026, Court Zero Mid, Bola Futsal Junior']]),next:'Import products'}
+  ]:[
+   {t:'What is the product called?',p:'Type it or say it.',body:()=>fld('name','Product name','e.g. Pacer Lite 2026'),ok:()=>(d.name||'').trim(),sample:{name:'Pacer Lite 2026'}},
+   {t:'Which category?',p:'Shoppers find it faster.',body:()=>`<div class="gt-chips">${['Running','Basketball','Football & Futsal','Racket Sports','Apparel','Other'].map(c=>`<button data-gch="cat:${c}" aria-pressed="${d.cat===c}" type="button">${c}</button>`).join('')}</div>`,ok:()=>!!d.cat},
+   {t:'Price and stock',p:'Ganes uses these to answer shoppers.',body:()=>`<div class="gt-two">${fld('price','Price (Rp)','1299000',{type:'number'})}${fld('stock','Stock','15',{type:'number'})}</div>`,ok:()=>+d.price>0&&d.stock!==undefined&&d.stock!=='',sample:{price:'1299000',stock:'15'}},
+   {t:'Check and save',p:'You can edit it later.',body:()=>kv([['Name',d.name],['Category',d.cat],['Price',idr(d.price)],['Stock',d.stock]]),next:'Save product'}
+  ]),
+  {t:'',body:()=>done(d.method==='csv'?'6 products added':'Product saved','Ganes can now recommend it to shoppers.'),final:true}]},
+ docs:{title:'Add your store documents',msg:'Documents processed.',steps:d=>[
+  {t:'What do you want to add?',p:'Return policy, shipping, payment. Ganes answers from these.',body:()=>choice('type',[['file','doc','Upload files','PDF, DOCX or TXT.'],['url','link','Add a web page','Ganes reads the page.']]),ok:()=>!!d.type},
+  ...(d.type==='url'?[
+   {t:'Paste the page link',p:'For example your FAQ page.',body:()=>fld('url','Page link','https://gelorasport.id/faq'),ok:()=>/^https?:\/\/\S+\.\S+/.test(d.url||''),sample:{url:'https://gelorasport.id/faq'}},
+   {t:'Reading the page…',p:'This takes a few seconds.',...auto(1600,'Reading gelorasport.id/faq…')},
+   {t:'',body:()=>done('Page added','Ganes can answer from your FAQ now.'),final:true}
+  ]:[
+   {t:'Upload your documents',p:'You can upload more than one file.',body:()=>drop('files',['Kebijakan Retur.pdf','Promo Cicilan.pdf'],'Upload files'),ok:()=>d.files&&d.files.length},
+   {t:'Processing your files…',p:'Ganes reads each document.',...auto(2000,'Reading documents…')},
+   ...(d.files&&d.files.length>1&&!d.fixed?[
+    {t:'1 of 2 documents couldn’t be read',p:'“Promo Cicilan.pdf” is a scanned image. Upload it again as a text PDF.',body:()=>`<div class="gt-file"><div>${ic2('doc',18)}<span>${esc(d.files[0])}</span><em class="ok">Ready</em></div><div>${ic2('doc',18)}<span>${esc(d.files[1])}</span><em class="bad">Can’t read</em></div></div>`+choice('fix',[['again','up','Upload again','Choose a text PDF version.'],['skip','doc','Continue without it','Fix it later as a daily task.']]),ok:()=>!!d.fix},
+    ...(d.fix==='again'?[
+     {t:'Upload the text PDF',p:'Not a scan or photo.',body:()=>drop('re',['Promo Cicilan (text).pdf'],'Upload again'),ok:()=>d.re&&d.re.length},
+     {t:'Processing…',p:'',...auto(1400,'Reading Promo Cicilan (text).pdf…')}]:[])
+   ]:[]),
+   {t:'',body:()=>done(d.fix==='skip'?'1 document ready':'Documents ready',d.fix==='skip'?'Promo Cicilan.pdf comes back later as a daily task.':'Ganes can answer return and installment questions.'),final:true}
+  ])]},
+ test:{title:'Test your chatbot',msg:'Test finished.',steps:d=>[
+  {t:'Run a quick test',p:'Ganes asks 10 questions shoppers usually ask a sports store.',body:()=>`<ul class="gt-list">${['Do you have running shoes for beginners?','Can I return shoes that are too small?','Can I pay in installments?','Do you deliver to Bekasi?','…and 6 more'].map(q=>`<li><i></i>${q}</li>`).join('')}</ul>`,next:'Run test'},
+  {t:'Testing…',p:'Asking 10 questions.',...auto(2200,'Question 7 of 10…')},
+  {t:'Ganes answered 8 of 10',p:'2 questions had no answer. Add them now or later.',body:()=>`<ul class="gt-list"><li class="no"><i></i>Can I pay in installments?</li><li class="no"><i></i>Do you deliver to Bekasi?</li></ul>`+choice('fix',[['add','doc','Add 2 answers','Ganes uses them right away.'],['skip','box','Skip for now','They stay in Answer Gaps.']]),ok:()=>!!d.fix},
+  ...(d.fix==='add'?[
+   {t:'“Can I pay in installments?”',p:'Write the answer Ganes should give.',body:()=>fld('a1','Answer','Type the answer…',{area:1}),ok:()=>(d.a1||'').trim(),sample:{a1:'Yes, installments are available with selected credit cards at checkout.'}},
+   {t:'“Do you deliver to Bekasi?”',p:'Write the answer Ganes should give.',body:()=>fld('a2','Answer','Type the answer…',{area:1}),ok:()=>(d.a2||'').trim(),sample:{a2:'Yes, we deliver to Bekasi in 1–2 business days.'}}]:[]),
+  {t:'',body:()=>done(d.fix==='add'?'10 of 10 answered':'Test finished',d.fix==='add'?'Ganes uses your answers right away.':'You can add the 2 answers later.'),final:true}]},
+ install:{title:'Put the chatbot on your website',msg:'Widget detected. Chatbot online.',steps:d=>[
+  ...(d.dev?[
+   {t:'Send the code to your developer',p:'They get the code and the steps by email.',body:()=>fld('mail','Developer email','dev@gelorasport.id',{type:'email'}),ok:()=>/\S+@\S+\.\S+/.test(d.mail||''),sample:{mail:'dev@gelorasport.id'},next:'Send email'},
+   {t:'',body:()=>done('Email sent','Ganes tells you when the chat widget appears.'),final:true}
+  ]:[
+   {t:'Copy your code',p:'One line, from Chatbot Settings › Appearance.',body:()=>`<div class="gt-code">&lt;script src="https://cdn.ganes.ai/widget.js" data-store="gelora-sport" async&gt;&lt;/script&gt;</div><div class="acts" style="margin-top:12px"><button class="ghost" data-gcopy type="button">${d.copied?'Copied ✓':'Copy code'}</button></div>`,ok:()=>d.copied},
+   {t:'Paste it into your website',p:'Do this in your website editor.',body:()=>`<ul class="gt-list"><li><i></i>Open your website editor.</li><li><i></i>Paste the code just before &lt;/body&gt;.</li><li><i></i>Save and publish.</li></ul>`,next:'I pasted it'},
+   {t:'Checking your website…',p:'Looking for the chat widget.',...auto(2400,'Checking gelorasport.id…')},
+   {t:'',body:()=>done('Chatbot online','Shoppers on your website can chat with Ganes now.'),final:true}
+  ])]},
+ reply:{title:'Reply to a waiting customer',msg:'Reply sent.',steps:d=>[
+  {t:'“Can I return shoes that are too small?”',p:'Rina Kusuma · waiting 12 min. Edit Ganes’s draft if needed.',body:()=>fld('draft','Your reply','',{area:1}),ok:()=>(d.draft||'').trim(),next:'Send reply'},
+  {t:'',body:()=>done('Reply sent','Rina gets your answer in the chat.'),final:true}]},
+ stock:{title:'Update Court Zero Low stock',msg:'Court Zero Low stock updated.',steps:d=>[
+  {t:'How many Court Zero Low are in stock now?',p:'Out of stock · shoppers asked 17 times.',body:()=>fld('stock','New stock','e.g. 24',{type:'number'}),ok:()=>+d.stock>=0&&d.stock!==''&&d.stock!==undefined,sample:{stock:'24'}},
+  {t:'Check and save',p:'',body:()=>kv([['Product','Court Zero Low'],['Stock','0 → '+d.stock]]),next:'Save stock'},
+  {t:'',body:()=>done('Stock updated','Ganes tells shoppers it’s available again.'),final:true}]},
+ fixdoc:{title:'Fix Promo Cicilan.pdf',msg:'Promo Cicilan.pdf processed.',steps:d=>[
+  {t:'Upload Promo Cicilan as a text PDF',p:'The old file is a scanned image, so Ganes can’t read it.',body:()=>drop('re',['Promo Cicilan (text).pdf'],'Upload again'),ok:()=>d.re&&d.re.length},
+  {t:'Processing…',p:'',...auto(1400,'Reading Promo Cicilan (text).pdf…')},
+  {t:'',body:()=>done('Document ready','Ganes can answer installment questions now.'),final:true}]}
+};
+const WMAP={'setup:0:complete':['products',{}],'setup:0:alt':['products',{method:'one'}],'setup:1:complete':['docs',{}],'setup:1:alt':['docs',{type:'url'}],
+ 'setup:2:complete':['test',{}],'setup:2:alt':['test',{}],'setup:3:complete':['install',{}],'setup:3:alt':['install',{dev:true}],
+ 'tasks:0:alt':['reply',{draft:TASKS[0].draft}],'tasks:1:complete':['stock',{}],'tasks:1:alt':['stock',{}],'tasks:2:complete':['fixdoc',{}]};
+let W=null,wT=0;
+function gtOpen(a){gtDir='in';
+  if(!S.queue.length)return false;const m=WMAP[`${S.mode}:${S.queue[0]}:${a}`];if(!m)return false;
+  S.sub=null;W={id:m[0],d:Object.assign({},m[1]),i:0,lis:null};render();return true;
+}
+function gtSteps(){return WIZ[W.id].steps(W.d)}
+function gtGo(i){clearInterval(wT);if(i>W.i)gtDir='in';W.i=i;W.lis=null;W.d.p=0;render();const st=gtSteps()[i];
+  if(st&&st.auto){const t0=Date.now();wT=setInterval(()=>{W.d.p=Math.min(1,(Date.now()-t0)/st.auto);const b=$('#gtbar');if(b)b.style.width=Math.round(W.d.p*100)+'%';if(W.d.p>=1){clearInterval(wT);gtGo(W.i+1)}},60)}}
+function gtNext(){const L=gtSteps(),st=L[W.i];if(st.final){gtFinish();return}if(st.ok&&!st.ok())return;gtGo(W.i+1)}
+function gtBack(){gtDir='back';let i=W.i-1;const L=gtSteps();while(i>0&&L[i].auto)i--;if(i>=0)gtGo(i)}
+function gtCancel(){clearInterval(wT);W=null;render()}
+function gtFinish(){const id=W.id,skip=W.d.fix==='skip'&&id==='docs';clearInterval(wT);W=null;
+  const idx=S.queue.shift();S.done.push(idx);S.sub=null;const stamp=Date.now();S.last={idx,stamp,msg:WIZ[id].msg};
+  later(5000,()=>{if(S.last&&S.last.stamp===stamp){S.last=null;render()}});render();saveHome();
+  if(skip)say('Promo Cicilan.pdf will come back later as a daily task.');}
+let gtDir='in';
+function gtHasInput(){const c=$('.gt-card');return !!(c&&c.querySelector('input,textarea'))}
+function guided(){
+  const L=gtSteps(),st=L[W.i],steps=L.filter(x=>!x.final),n=steps.length,cur=Math.min(W.i+1,n),wz=WIZ[W.id];
+  const can=!st.ok||!!st.ok();
+  const body=st.body();
+  const tap=/data-gch=/.test(body)&&!/<input|<textarea/.test(body);
+  const auto=!!st.auto, upload=/gt-drop/.test(body), copy=/data-gcopy/.test(body);
+  /* papers left = upcoming steps */
+  const up=st.final?[]:L.slice(W.i+1).filter(x=>!x.final&&!x.auto).slice(0,2);
+  const prevI=(()=>{let k=W.i-1;while(k>=0&&L[k].auto)k--;return k})();
+  const prev=!st.final&&!auto&&prevI>=0?L[prevI]:null;
+  let foot;
+  if(st.final)foot=`<span>${wz.title} · done</span><span class="sp"></span><button class="pri" data-a="gtnext" type="button">Back to Home</button>`;
+  else if(auto)foot=`<span>Working… this moves on by itself</span><span class="sp"></span><span>Step ${cur} of ${n}</span>`;
+  else if(tap)foot=`<span>Tap an option to continue</span><span class="sp"></span><span>Step ${cur} of ${n}</span>`;
+  else if(upload||copy)foot=`<span>${upload?'Choose a file to continue':'Copy the code to continue'}</span><span class="sp"></span><span>Step ${cur} of ${n}</span>`;
+  else foot=`<span>Step ${cur} of ${n}</span><span class="sp"></span><button class="pri" data-a="gtnext" type="button" ${can?'':'disabled'}>${st.next||'Continue'}</button>`;
+  const d=gtDir;gtDir='';
+  return`<div class="gt" role="region" aria-labelledby="gth">
+   <div class="gt-top"><div class="x"><small>${st.final?'Done':'Step '+cur+' of '+n}</small><b id="gth">${wz.title}</b><div class="gt-segs" aria-hidden="true">${steps.map((_,k)=>`<span class="${k<cur-(st.final?0:1)||st.final?'on':''}${k===cur-1&&!st.final?' on':''}"></span>`).join('')}</div></div>
+    ${st.final?'':`<button class="back" data-a="gtcancel" type="button">${ic('left',18,2)}Cancel · back to Home</button>`}</div>
+   <div class="gt-body">
+    <div class="gt-stack">
+     <section class="gt-card ${d}" data-k="${W.id}-${W.i}">${st.t?`<h2>${st.t}</h2>`:''}${st.p?`<p>${st.p}</p>`:''}${body}<div class="gt-foot">${foot}</div></section>
+    </div>
+   </div>
+  </div>`;
+}
+function gtSync(){const b=$('.gt-foot .pri');const st=W&&gtSteps()[W.i];if(b&&st&&st.ok&&!st.final)b.disabled=!st.ok()}
+
+
+/* ---------- v2.6: screenshot mode (?shot=id) for the storyboard ---------- */
+const SHOTS={
+ h_new:()=>{setScenario(1);S.tip=true},
+ gp_method:()=>{setScenario(1);S.tip=false;gtOpen('complete');W.d.method='one'},
+ gp_name:()=>{setScenario(1);gtOpen('complete');W.d.method='one';W.i=1;W.d.name='Pacer Lite 2026'},
+ gp_cat:()=>{setScenario(1);gtOpen('complete');Object.assign(W.d,{method:'one',name:'Pacer Lite 2026',cat:'Running'});W.i=2},
+ gp_price:()=>{setScenario(1);gtOpen('complete');Object.assign(W.d,{method:'one',name:'Pacer Lite 2026',cat:'Running',price:'1299000',stock:'15'});W.i=3},
+ gp_review:()=>{setScenario(1);gtOpen('complete');Object.assign(W.d,{method:'one',name:'Pacer Lite 2026',cat:'Running',price:'1299000',stock:'15'});W.i=4},
+ gp_done:()=>{setScenario(1);gtOpen('complete');Object.assign(W.d,{method:'one',name:'Pacer Lite 2026',cat:'Running',price:'1299000',stock:'15'});W.i=5},
+ gp_csv:()=>{setScenario(1);gtOpen('complete');Object.assign(W.d,{method:'csv',csv:['gelora-products.csv']});W.i=1},
+ h_step2:()=>{setScenario(1);S.tip=false;S.queue=[1,2,3];S.done=[0];S.last={idx:0,stamp:1,msg:'Products saved.'}},
+ gd_upload:()=>{setScenario(1);S.queue=[1,2,3];S.done=[0];gtOpen('complete');Object.assign(W.d,{type:'file',files:['Kebijakan Retur.pdf','Promo Cicilan.pdf']});W.i=1},
+ gd_failed:()=>{setScenario(1);S.queue=[1,2,3];S.done=[0];gtOpen('complete');Object.assign(W.d,{type:'file',files:['Kebijakan Retur.pdf','Promo Cicilan.pdf'],fix:'again'});W.i=3},
+ gt_result:()=>{setScenario(1);S.queue=[2,3];S.done=[0,1];gtOpen('complete');Object.assign(W.d,{fix:'add'});W.i=2},
+ gt_answer:()=>{setScenario(1);S.queue=[2,3];S.done=[0,1];gtOpen('complete');Object.assign(W.d,{fix:'add',a1:'Yes, installments are available with selected credit cards at checkout.'});W.i=3},
+ gi_copy:()=>{setScenario(1);S.queue=[3];S.done=[0,1,2];gtOpen('complete');W.d.copied=true},
+ gi_check:()=>{setScenario(1);S.queue=[3];S.done=[0,1,2];gtOpen('complete');W.d.copied=true;W.i=2;W.d.p=.6},
+ h_online:()=>{setScenario(1);S.tip=false;S.queue=[];S.done=[0,1,2,3];S.last={idx:3,stamp:1,msg:'Widget detected. Chatbot online.'}},
+ h_tasks:()=>{setScenario(2)},
+ gr_reply:()=>{setScenario(2);gtOpen('alt')},
+ gs_stock:()=>{setScenario(2);S.queue=[1,2,0];gtOpen('complete');W.d.stock='24'},
+ h_clear:()=>{setScenario(2);S.time='evening';S.queue=[];S.done=[0,1,2]},
+ voice:()=>{setScenario(2);S.voice={text:'How many Jersey Tim Custom are left?',dim:false,idle:false,src:'Started with the Speak button'}},
+ ai:()=>{setScenario(2);S.view='ai';S.ai=[{r:'u',t:'How many Jersey Tim Custom are left?',time:'08:12'},Object.assign({r:'a',time:'08:12'},aiAnswer('How many Jersey Tim Custom are left?'))]},
+ menus:()=>{setScenario(2);S.menus=true},
+ prof:()=>{setScenario(2);S.prof=true},
+ set_g:()=>{setScenario(4);S.g.setup=true;S.g.on=true},
+ wz1:()=>{setScenario(4);S.wiz={step:0,prac:{peace:false,fist:false},p:0}},
+ wz2:()=>{setScenario(4);S.wiz={step:1,prac:{peace:false,fist:false},p:0}},
+ wz3:()=>{setScenario(4);S.wiz={step:2,prac:{peace:true,fist:false},p:0}},
+ g1:()=>gFrame(0),g2:()=>gFrame(1),g3:()=>gFrame(2),g4:()=>gFrame(3),g5:()=>gFrame(4),g6:()=>gFrame(5)
+};
+function shotMode(id){
+  document.body.classList.add('shot');togglePanel(false);$('#pocBtn').hidden=true;
+  try{['ax24-state','ax24-task','ax24-result'].forEach(k=>localStorage.removeItem(k))}catch(e){}
+  clearTimers();SHOTS[id]();if(W)clearInterval(wT);render();
+  document.querySelectorAll('*').forEach(e=>{e.style.animation='none'});
+  const qs=new URLSearchParams(location.search);if(qs.get('sel')){const L=JSON.parse(qs.get('sel'));
+    document.body.setAttribute('data-rects',JSON.stringify(L.map(x=>{const e=document.querySelector(x);if(!e)return null;const r=e.getBoundingClientRect();return[Math.round(r.left),Math.round(r.top),Math.round(r.width),Math.round(r.height)]})))}
+}
+
+/* ---------- events ---------- */
+const tabEl=$('#tab');
+tabEl.addEventListener('click',e=>{
+  const gb=e.target.closest('[data-gch],[data-gspeak],[data-gsample],[data-gfile],[data-gcopy]');
+  if(gb&&W){
+    if(gb.dataset.gch){const[k,v]=gb.dataset.gch.split(':');W.d[k]=v;render();if(!gtHasInput()){const st=gtSteps()[W.i];if(!st.ok||st.ok())later(260,()=>{if(W)gtNext()})}return}
+    if(gb.dataset.gsample){const st=gtSteps()[W.i];const k=gb.dataset.gsample;W.d[k]=gb.textContent.replace('Use sample: ','').split(', ');render();later(500,()=>{if(W)gtNext()});return}
+    if(gb.dataset.gfile){const fi=$('#gt-fi');const k=gb.dataset.gfile;fi.onchange=()=>{W.d[k]=[...fi.files].map(f=>f.name);render();later(500,()=>{if(W)gtNext()})};fi.click();return}
+    if(gb.hasAttribute('data-gcopy')){W.d.copied=true;try{navigator.clipboard.writeText('<script src="https://cdn.ganes.ai/widget.js" data-store="gelora-sport" async></'+'script>')}catch(x){}render();later(600,()=>{if(W)gtNext()});return}
+    if(gb.dataset.gspeak){const k=gb.dataset.gspeak;const st=gtSteps()[W.i];if(W.lis){W.lis=null;render();return}W.lis=k;render();
+      const txt=(st.sample&&st.sample[k])||'';const words=String(txt).split(' ');let i=0;
+      const step=()=>{if(!W||W.lis!==k)return;i++;W.d[k]=words.slice(0,i).join(' ');const el=document.getElementById('gt-'+k);if(el)el.value=W.d[k];gtSync();if(i<words.length)later(220,step);else later(500,()=>{if(W&&W.lis===k){W.lis=null;render()}})};
+      later(700,step);return}
+  }
+  const b=e.target.closest('[data-a],[data-open],[data-tab],[data-sg],[data-sug],[data-say],[data-sw]');
+  if(!b){if(S.prof&&!e.target.closest('.dd')){S.prof=false;render()}return}
+  if(b.dataset.open!=null){const o=b.dataset.open;S.menus=false;
+    if(o==='@settings'){S.view='settings';S.setTab='home';render();return}
+    goPage(o);return}
+  if(b.dataset.tab){S.setTab=b.dataset.tab;render();return}
+  if(b.dataset.sg){S.suggest=b.dataset.sg;render();return}
+  if(b.dataset.sug){aiSend(b.dataset.sug,false);return}
+  if(b.dataset.say){say(b.dataset.say);return}
+  if(b.dataset.sw){b.setAttribute('aria-checked',b.getAttribute('aria-checked')!=='true');return}
+  const a=b.dataset.a;
+  if(a!=='prof'&&!a.startsWith('set:')&&a!=='help'&&a!=='signout')S.prof=false;
+  if(a==='set:bill'){goPage('Billing');return}
+  if(a==='set:mem'){goPage('Members');return}
+  if(a==='set:info'){goPage('Profile');return}
+  if(a.startsWith('set:')){S.view='settings';S.setTab=a.slice(4);S.prof=false;S.menus=false;
+    if(S.setTab==='acc'){S.setTab='home';say('Access control is [TBD].')}vxClose(true);render();return}
+  switch(a){
+    case'home':S.view='home';vxClose(true);render();break;
+    case'complete':if(!gtOpen('complete'))complete();break;
+    case'alt':if(!gtOpen('alt'))alt();break;
+    case'gtnext':gtNext();break;
+    case'gtback':gtBack();break;
+    case'gtcancel':gtCancel();break;
+    case'later':pushLater();break;
+    case'undo':undo();break;
+    case'viewall':say(S.mode==='setup'?'Opens all 4 setup steps.':'Opens all tasks: Can’t wait, Quick tasks, Done today.');break;
+    case'how':say('Ganes puts the most important thing first. Finish it and the next one appears here.');break;
+    case'menus':S.menus=!S.menus;S.mq='';vxClose(true);render();if(S.menus)later(350,()=>{const i=$('#mq');if(i)i.focus()});break;
+    case'menusx':S.menus=false;render();break;
+    case'prof':S.prof=!S.prof;render();break;
+    case'help':S.prof=false;say('Opens Help: how Home, tasks, voice and gestures work.');break;
+    case'signout':S.prof=false;try{localStorage.removeItem('ax24-state')}catch(e){};location.href='login.html';break;
+    case'tipok':S.tip=false;S.tipSeen=true;render();break;
+    case'speak':S.voice?vxClose():vxOpen();break;
+    case'ask':{const i=$('#askIn')||$('#aiIn');aiSend(i?i.value:S.query,false);break}
+    case'vagain':vListen();break;
+    case'vdone':if(vRec)vRec.stop();else if(S.voice&&!S.voice.idle){const t=$('#vxsay').textContent;vGen++;if(t&&t!=='What can I help you with?')vFinish(t);else vxClose()}break;
+    case'vcancel':vxClose();break;
+    case'goff':gLive();gStop();S.g.mode='off';S.g.offReason='manual';S.g.pose=null;camStop();render();break;
+    case'gon':gLive();S.g.mode='idle';S.g.offReason='';if(OPT.cam==='real')camStart();gArmAutoOff();render();break;
+    case'gstop':gStopListen();break;
+    case'gwiz':wizOpen(0);break;
+    case'gedit':wizOpen(1);break;
+    case'wnext':wizNext();break;
+    case'wback':if(S.wiz.step>0){S.wiz.step--;render()}else wizClose();break;
+    case'wclose':wizClose();break;
+    case'wdone':wizClose();S.view='home';render();break;
+    case'gcancel':gCancel();break;
+    case'gtoggle':S.g.on=!S.g.on;S.g.mode='idle';S.g.offReason='';
+      if(S.g.on){if(OPT.cam==='real')camStart();gArmAutoOff()}else{camStop();clearTimeout(autoOffT)}
+      render();say(S.g.on?'Gesture Shortcuts are on. They show in the task list on Home.':'Gesture Shortcuts are off.');break;
+  }
+});
+tabEl.addEventListener('pointerdown',e=>{const c=e.target.closest('.gs .chip');if(c){e.preventDefault();gPress(c.dataset.pose)}const w=e.target.closest('[data-prac]');if(w){e.preventDefault();wizPrac(w.dataset.prac)}});
+['pointerup','pointercancel'].forEach(t=>tabEl.addEventListener(t,()=>{if(S.g.mode==='hold'&&!keyPose)gRelease();wizRel()}));
+tabEl.addEventListener('change',e=>{if(e.target.dataset.map){S.g.map[e.target.dataset.map]=e.target.value}});
+tabEl.addEventListener('input',e=>{
+  if(W&&e.target.dataset.bind){W.d[e.target.dataset.bind]=e.target.value;gtSync();return}
+  if(e.target.id==='askIn'||e.target.id==='aiIn'){const had=!!S.query.trim();S.query=e.target.value;if(had!==!!S.query.trim()){const box=e.target.closest('.ask'),old=box&&box.querySelector('.askbtn,.speak');
+    if(old){const q=S.query.trim(),lis=!!S.voice;const t=document.createElement('template');t.innerHTML=q?`<button class="askbtn" data-a="ask" type="button">Ask</button>`:`<button class="speak${lis?' on':''}" data-a="speak" aria-pressed="${lis}" type="button">${ic('mic',18,1.9)}${lis?'Stop':'Speak'}</button>`;old.replaceWith(t.content.firstChild)}}}
+  if(e.target.id==='mq'){S.mq=e.target.value;const t=document.createElement('template');t.innerHTML=menusSheet();const nb=t.content.querySelector('.sb');const sb=$('.sheet .sb');if(sb&&nb)sb.replaceWith(nb)}
+});
+tabEl.addEventListener('keydown',e=>{
+  if(W&&e.key==='Enter'&&e.target.tagName==='INPUT'){e.preventDefault();gtNext();return}
+  if((e.target.id==='askIn'||e.target.id==='aiIn')&&e.key==='Enter'){e.preventDefault();aiSend(e.target.value,false)}
+});
+tabEl.addEventListener('focusin',e=>{if((e.target.id==='askIn'||e.target.id==='aiIn')&&S.g.on&&['idle','cancelled'].includes(S.g.mode)){gLive();S.g.mode='paused';render()}});
+tabEl.addEventListener('focusout',e=>{if((e.target.id==='askIn'||e.target.id==='aiIn')&&S.g.mode==='paused')later(120,()=>{if(S.g.mode==='paused'&&!S.g.frozen&&!['askIn','aiIn'].includes(document.activeElement&&document.activeElement.id)){S.g.mode='idle';S.query=S.query;render()}})});
+
+let keyPose=null;
+document.addEventListener('keydown',e=>{
+  const typing=/INPUT|SELECT|TEXTAREA/.test(document.activeElement&&document.activeElement.tagName);
+  if(e.key==='Escape'&&W){gtCancel();return}
+  if(e.key==='Escape'){if(S.voice)vxClose();else if(S.menus){S.menus=false;render()}else if(S.prof){S.prof=false;render()}return}
+  if(typing||e.metaKey||e.ctrlKey||e.altKey)return;
+  const k=e.key.toLowerCase();
+  if(S.wiz&&S.wiz.step===2){const p={v:'peace',f:'fist'}[k];if(p&&!e.repeat)wizPrac(p);return}
+  if(!S.g.on)return;
+  if(k==='f'){gLive();if(S.g.mode==='confirm')gCancel();else if(S.g.mode==='hold')gRelease();return}
+  const pose={v:'peace',u:'thumb',o:'point'}[k];
+  if(pose&&!e.repeat){keyPose=pose;gPress(pose)}
+});
+document.addEventListener('keyup',e=>{const k=e.key.toLowerCase();if(S.wiz&&k==='v')wizRel();const pose={v:'peace',u:'thumb',o:'point'}[k];if(pose&&keyPose===pose){keyPose=null;gRelease()}});
+document.addEventListener('visibilitychange',()=>{const g=S.g;if(!g.on)return;if(document.hidden){if(['idle','hold','cancelled'].includes(g.mode)){gStop();g.mode='tab';g.pose=null;camStop();render()}}else if(g.mode==='tab'){g.mode='idle';if(OPT.cam==='real')camStart();gArmAutoOff();render()}});
+
+
+/* ---------- Self-test: runs every flow through the real engine and pages, then restores data ---------- */
+const POC_CLOSED_AT_LOAD=!document.body.classList.contains('ax-poc-on');
+async function selfTest(){
+  const out=[],w=ms=>new Promise(r=>setTimeout(r,ms));
+  const ok=(name,cond,info='')=>out.push([!!cond,name,info]);
+  const keep={};['ax24-state','ax24-task','ax24-result','ax22-home'].forEach(k=>{try{keep[k]=localStorage.getItem(k)}catch(e){}});
+  const keepS=JSON.parse(JSON.stringify({sc:S.sc,time:S.time,tipSeen:S.tipSeen}));
+  const T=async(name,fn)=>{try{await fn()}catch(e){ok(name,false,'error: '+e.message)}};
+  const walk=fill=>{let g=0;while(W&&g++<40){const st=gtSteps()[W.i];fill(W.d,st);if(st.final){gtNext();return true}if(st.auto){clearInterval(wT);gtGo(W.i+1);continue}if(st.ok&&!st.ok())return false;gtNext()}return !W};
+  const fill=(d,st)=>{if(st.sample)Object.assign(d,st.sample);const t=st.t||'';
+    if(/How do you want/.test(t))d.method=d.method||'one';if(/category/.test(t))d.cat='Running';if(/CSV file/.test(t))d.csv=['a.csv'];
+    if(/What do you want/.test(t))d.type=d.type||'file';if(/Upload your documents/.test(t))d.files=['Kebijakan Retur.pdf','Promo Cicilan.pdf'];
+    if(/couldn’t be read/.test(t))d.fix=d.fix||'again';if(/text PDF|Upload Promo/.test(t))d.re=['x.pdf'];if(/answered 8/.test(t))d.fix=d.fix||'add';if(/Copy your code/.test(t))d.copied=true;if(/Paste the page/.test(t))d.url='https://gelorasport.id/faq'};
+  ok('POC tools closed by default',POC_CLOSED_AT_LOAD);
+  await T('Header order',()=>{setScenario(2);const n=[...document.querySelectorAll('.hd .nav > *')].map(e=>e.textContent.trim().split(/\s/)[0]);ok('Header order: Alerts · All menus · Profile',/^Alerts/.test(n[0])&&/^All/.test(n[1])&&/Andi/.test(n[2]),n.join(' | '))});
+  await T('Alerts',()=>{const a=document.querySelector('.alerts');ok('Alerts view-only (not a button)',a&&a.tagName==='SPAN'&&a.getAttribute('aria-disabled')==='true')});
+  /* new owner */
+  await T('New owner',async()=>{setScenario(1);ok('New owner: 0 of 4, Speak tooltip once',$('.prog').textContent==='0 of 4 done'&&!!$('.tip'));
+    $('[data-a=tipok]').click();ok('Tooltip closes with Got it',!$('.tip'));
+    $('[data-a=complete]').click();ok('Start opens guided task under header',!!$('.gt')&&!!$('.hd'));
+    ok('No bottom Next button',!$('.gt-bot .pri'));
+    $('[data-gch="method:one"]').click();await w(400);ok('Tap option = next step',W&&W.i===1);
+    ok('Typing step: Continue disabled when empty',$('.gt-foot .pri')&&$('.gt-foot .pri').disabled);
+    const i=$('#gt-name');i.value='Pacer Lite 2026';i.dispatchEvent(new Event('input',{bubbles:true}));ok('Continue enabled after typing',!$('.gt-foot .pri').disabled);
+    walk(fill);ok('Add products done → 1 of 4',$('.prog').textContent==='1 of 4 done'&&/Products saved/.test($('.donebar').textContent));
+    $('[data-a=undo]').click();ok('Undo brings step back',$('.prog').textContent==='0 of 4 done');
+    $('[data-a=later]').click();ok('Later moves step down',S.queue[0]===1);
+    setScenario(1);for(let k=0;k<4;k++){gtOpen('complete');walk(fill)}
+    ok('All 4 setup steps → chatbot online',$('.prog').textContent==='4 of 4 done'&&/online/.test($('.card h2').textContent));
+    setScenario(1);gtOpen('alt');ok('Add one by one pre-selects manual',W&&W.d.method==='one');gtCancel();ok('Cancel → Home unchanged',!W&&$('.prog').textContent==='0 of 4 done');
+    setScenario(1);S.queue=[1,2,3];S.done=[0];gtOpen('complete');W.d.type='file';W.d.files=['Kebijakan Retur.pdf','Promo Cicilan.pdf'];W.d.fix='skip';walk(fill);ok('Documents: continue without failed file',S.done.length===2);
+    setScenario(1);S.queue=[3];S.done=[0,1,2];gtOpen('alt');ok('Install alt = send to developer',W&&W.d.dev===true);walk(fill);ok('Install via developer completes',S.queue.length===0)});
+  /* returning owner */
+  await T('Returning',async()=>{setScenario(2);ok('Returning: 3 tasks, customer waiting first',$('.prog').textContent==='0 of 3 done'&&/Customer waiting/.test($('.tag').textContent));
+    $('[data-a=complete]').click();ok('Send reply is one tap',S.done.length===1&&!W);
+    gtOpen('complete');ok('Update stock opens guided task',W&&W.id==='stock');walk(fill);ok('Stock updated',S.done.length===2);
+    gtOpen('complete');walk(fill);ok('Fix document → all clear',S.queue.length===0&&/All clear/.test($('.card h2').textContent));
+    ok('Morning: 2 habit shortcuts',document.querySelectorAll('.shb').length===2);
+    S.time='evening';render();ok('Evening: 3 habit shortcuts',document.querySelectorAll('.shb').length===3);
+    setScenario(2);gtOpen('alt');ok('Edit reply = guided reply with draft',W&&W.id==='reply'&&!!W.d.draft);gtCancel()});
+  /* ask & voice */
+  await T('Ask',async()=>{setScenario(2);aiSend('How many Jersey Tim Custom are left?',false);await w(1200);ok('Ask → AI Room answer',S.view==='ai'&&/Jersey Tim Custom has 3 left/.test($('#ail').textContent));
+    aiSend('return policy',false);await w(1200);ok('AI: return policy answer',/Kebijakan Retur/.test($('#ail').textContent));
+    ok('AI action buttons present',document.querySelectorAll('#ail [data-open]').length>0);
+    $('[data-a=home]').click();ok('Back to Home',S.view==='home');
+    OPT.voice='sim';vxOpen();ok('Speak opens waveform',!!$('.vx'));await w(14000);ok('Voice (simulated) → AI Room',S.view==='ai'&&S.ai.some(m=>m.voice),'needs ~12 s');vxClose(true);S.view='home';render()});
+  /* all menus & profile */
+  await T('Typing focus',()=>{setScenario(2);const typeIn=el=>{el.focus();el.value='';let okk=true;for(const c of 'Pacer'){el.value+=c;el.dispatchEvent(new Event('input',{bubbles:true}));if(document.activeElement!==el||!el.isConnected)okk=false}return okk&&el.value==='Pacer'};
+    ok('Typing keeps focus: Ask Ganes',typeIn($('#askIn')));S.query='';render();
+    $('[data-a=menus]').click();ok('Typing keeps focus: Find a menu',typeIn($('#mq')));S.menus=false;S.mq='';render();
+    setScenario(1);gtOpen('complete');$('[data-gch="method:one"]').click();gtGo(1);ok('Typing keeps focus: guided field',typeIn($('#gt-name')));gtCancel();
+    S.view='settings';S.setTab='info';render();ok('Typing keeps focus: profile fields',typeIn($('#f1')));S.view='home';render()});
+  await T('Menus',()=>{setScenario(2);$('[data-a=menus]').click();ok('All menus: 3 sections',document.querySelectorAll('.ms').length===3);
+    const q=$('#mq');q.value='stock';q.dispatchEvent(new Event('input',{bubbles:true}));ok('Find a menu filters',document.querySelectorAll('.mi').length===1&&/Products/.test($('.mi').textContent));
+    $('.scrim').click();ok('Tap outside closes All menus',!$('.sheet'));
+    ok('Menu → page mapping',pageFor('Products')==='products'&&pageFor('Products › Stock alerts')==='products'&&pageFor('Chatbot Settings')==='settings'&&pageFor('Conversations › Needs Attention')==='conversations');
+    $('[data-a=prof]').click();ok('Profile menu opens',!!$('.dd'));document.body.click();
+    S.prof=false;S.view='settings';S.setTab='home';render();ok('Home & gestures tab',!!$('.seg'));S.view='home';render()});
+  /* gestures */
+  await T('Gesture',async()=>{setScenario(4);S.g.setup=false;S.g.on=false;wizOpen(0);ok('Gesture setup wizard opens',!!$('.wz'));wizNext();wizNext();S.wiz.prac={peace:true,fist:true};wizNext();ok('Setup finishes → gestures on',S.g.on&&S.g.setup);wizClose();
+    setScenario(3);gPress('peace');gStop();gConfirm('peace');gStop();ok('G2 confirm box',/Opening Ask Ganes/.test($('.gbar').textContent));gRun('peace');ok('G3 listening',S.g.mode==='listen'&&$('.ask').classList.contains('lis'));gStopListen();
+    gPress('thumb');gStop();gConfirm('thumb');gStop();gCancel();ok('G4 fist cancels',S.g.mode==='cancelled');
+    S.g.mode='idle';render();$('#askIn').dispatchEvent(new FocusEvent('focusin',{bubbles:true}));ok('G5 paused while typing',S.g.mode==='paused');
+    S.g.mode='idle';gAutoOff();ok('G6 auto-off',S.g.mode==='off'&&/No hand seen/.test($('.gs').textContent));
+    gFrame(0);ok('Frame G1',S.g.mode==='hold'&&S.g.p===.6)});
+  /* pages */
+  const PG=[['conversations','v-conv'],['chat-simulator','v-chat'],['knowledge-base','v-kb'],['products','v-prod'],['members','v-members'],['discovery-readiness','v-disc'],['chatbot-flow','v-flow'],['add-ons','v-addons'],['ai-service','v-svc'],['billing','v-bill'],['settings','v-settings'],['profile','v-profile']];
+  const frame=async src=>{const f=document.createElement('iframe');f.style.cssText='position:fixed;left:-3000px;top:0;width:1180px;height:820px';f.src=src;document.body.appendChild(f);await new Promise(r=>f.onload=r);return f};
+  const rpc=(f,msg,ms=4000)=>new Promise(res=>{const id=Math.random().toString(36).slice(2);const h=e=>{if(e.data&&e.data.ax==='probe-r'&&e.data.id===id){removeEventListener('message',h);res(e.data)}};addEventListener('message',h);f.contentWindow.postMessage(Object.assign({},msg,{id}),'*');setTimeout(()=>{removeEventListener('message',h);res(null)},ms)});
+  for(const [p,v] of PG){await T('page '+p,async()=>{const f=await frame(p+'.html');await w(1200);const r=await rpc(f,{ax:'probe-page'});
+    ok('Page '+p+': view + header + Gelora data',r&&r.view.includes(v)&&/^Alerts/.test(r.nav[0])&&/^All menus/.test(r.nav[1])&&/Andi/.test(r.nav[2])&&!r.bad.length,r?r.view.join(',')+' · '+r.nav.join('|')+' · '+r.bad.join(','):'no reply');f.remove()})}
+  await T('Add product page',async()=>{const f=await frame('products.html');await w(1200);const r=await rpc(f,{ax:'probe-page',sub:'probe-add'});ok('Products page: Add product (Manual Entry) saves',r&&r.ok,r&&r.err||'');f.remove()});
+  await T('Auth',async()=>{const f=await frame('login.html');await w(300);const r=await rpc(f,{ax:'probe-auth'},8000);(r?r.res:[[false,'Auth: no reply']]).forEach(([o,n])=>ok(n,o));f.remove()});
+  /* restore */
+  try{Object.entries(keep).forEach(([k,v])=>v==null?localStorage.removeItem(k):localStorage.setItem(k,v))}catch(e){}
+  setScenario(keepS.sc);S.time=keepS.time;S.tipSeen=keepS.tipSeen;render();
+  return out;
+}
+$('#bSelf').onclick=async()=>{const b=$('#bSelf');b.disabled=true;b.textContent='Running…';$('#stList').innerHTML='';
+  const r=await selfTest();const pass=r.filter(x=>x[0]).length;
+  $('#stSum').textContent=`${pass} / ${r.length} passed`;$('#stSum').style.color=pass===r.length?'#6EE7B7':'#FCA5A5';
+  $('#stList').innerHTML=r.map(([o,n,i])=>`<div style="color:${o?'#C9CED8':'#FCA5A5'}">${o?'✓':'✗'} ${esc(n)}${i&&!o?' · '+esc(i):''}</div>`).join('');
+  b.disabled=false;b.textContent='Run self-test';window.__selfTest=r};
+if(/[?&]selftest=1/.test(location.search))setTimeout(async()=>{const r=await selfTest();const pre=document.createElement('pre');pre.id='selftest';pre.textContent=JSON.stringify(r);document.body.appendChild(pre)},300);
+
+/* ---------- Gesture Shortcuts setup wizard (2 min) ---------- */
+const WZ=['Camera check','Choose shortcuts','Practice','Done'];
+function wizOpen(step){S.wiz={step,prac:{peace:false,fist:false},p:0};if(OPT.cam==='real')camStart();render()}
+function wizClose(){S.wiz=null;if(!S.g.on)camStop();render()}
+function wizNext(){const w=S.wiz;if(w.step<3){w.step++;if(w.step===3){S.g.setup=true;S.g.on=true;S.g.mode='idle';gArmAutoOff()}render()}}
+let wzI=0;
+function wizPrac(p){const w=S.wiz;if(!w||w.step!==2)return;
+  if(p==='fist'){if(w.prac.peace){w.prac.fist=true;render()}return}
+  clearInterval(wzI);w.p=0;wzI=setInterval(()=>{w.p+=40/800;const b=$('#wzbar');if(b)b.style.width=Math.min(100,w.p*100)+'%';if(w.p>=1){clearInterval(wzI);w.prac.peace=true;w.p=0;render()}},40)}
+function wizRel(){if(!S.wiz||S.wiz.prac.peace)return;clearInterval(wzI);S.wiz.p=0;const b=$('#wzbar');if(b)b.style.width='0%'}
+function wizard(){
+  const w=S.wiz,st=w.step,M=S.g.map;
+  let body='';
+  if(st===0)body=`<div class="camb">${OPT.cam==='real'?'<video id="wzv" muted playsinline></video>':`${handSvg('peace',56,'#8CA2FF')}<span>Camera preview (simulated)</span>`}</div>
+    <div class="chk"><span>${ic('ccheck',18,2).replace('currentColor','#067647')}Camera found</span><span>${ic('ccheck',18,2).replace('currentColor','#067647')}Good light</span><span>${ic('ccheck',18,2).replace('currentColor','#067647')}Hand visible at about 1 m</span></div>
+    <div class="blk">${ic('lock',18)}Video stays on this device and is never recorded.</div>`;
+  if(st===1)body=['peace','thumb','point'].map(k=>`<div class="maprow">${handSvg(k,40,A)}<span class="x"><b>${POSES[k][1]}</b><small>Hold 0.8 s</small></span>
+     <select data-map="${k}" aria-label="Shortcut for ${POSES[k][1]}">${GSHORT.map(o=>`<option value="${o.id}"${M[k]===o.id?' selected':''}>${o.target}</option>`).join('')}</select></div>`).join('')
+    +`<div class="maprow">${handSvg('fist',40)}<span class="x"><b>Fist</b><small>Always cancels a shortcut</small></span></div>
+    <div class="blk">${ic('lock',18)}Billing, Manage Members, Settings and Log out can’t be assigned to a gesture.</div>`;
+  if(st===2)body=`<p style="margin:0 0 14px;color:var(--t3);font-size:15px">Try it once. Hold the chip (or key <b>V</b>), then press <b>F</b> for a fist.</p><div class="prc">
+     <button class="chip${w.prac.peace?' on':''}" data-prac="peace" type="button">${handSvg('peace',40,A)}<span class="x"><b>1. Hold the V sign 0.8 s</b><small>${w.prac.peace?'<span class="ok">Done ✓</span>':'Press and hold'}</small></span><span class="bar" id="wzbar" style="width:${w.prac.peace?100:0}%"></span></button>
+     <button class="chip${w.prac.fist?' on':''}" data-prac="fist" type="button" ${w.prac.peace?'':'disabled'}>${handSvg('fist',40,w.prac.fist?A:'#344054')}<span class="x"><b>2. Make a fist to cancel</b><small>${w.prac.fist?'<span class="ok">Done ✓</span>':'Tap or press F'}</small></span></button></div>`;
+  if(st===3)body=`<div class="clr"><span class="ck">${ic('check',24,2.2).replace('currentColor',A)}</span><div><h2 style="margin:0;font-size:22px">Gesture Shortcuts are on</h2><p style="margin:4px 0 0;color:var(--t3)">Show a pose to the camera on Home.</p></div></div>
+    <div style="margin-top:16px">${['peace','thumb','point'].map(k=>`<div class="maprow">${handSvg(k,34,A)}<span class="x"><b>${POSES[k][1]}</b><small>${gsh(M[k]).target}</small></span></div>`).join('')}</div>`;
+  const canNext=st!==2||(w.prac.peace&&w.prac.fist);
+  return`<div class="scrim" data-a="wclose"></div><div class="wz" role="dialog" aria-modal="true" aria-labelledby="wzh">
+   <div class="wh"><div><h3 id="wzh">Set up Gesture Shortcuts</h3><p>About 2 minutes · Step ${st+1} of 4</p></div><button class="close" data-a="wclose" type="button">Close</button></div>
+   <ol>${WZ.map((l,i)=>`<li class="${i<=st?'on':''}">${l}</li>`).join('')}</ol>
+   <div class="wb">${body}</div>
+   <div class="wf">${st<3?`<button class="sec" data-a="wback" type="button">${st?'Back':'Cancel'}</button><span class="sp"></span>${st===2?`<button class="sec" data-a="wnext" type="button">Skip practice</button>`:''}<button class="pri" data-a="wnext" type="button" ${canNext?'':'disabled style="opacity:.45"'}>${st===0?'Camera works':st===1?'Save shortcuts':'Finish'}</button>`:`<span class="sp"></span><button class="pri" data-a="wdone" type="button">Go to Home</button>`}</div>
+  </div>`;
+}
+
+/* ---------- POC tools ---------- */
+$('#scs').innerHTML=SC.map(([n,l])=>`<button class="pxhb" data-sc="${n}" type="button">${n} · ${l}</button>`).join('');
+$('#gfr').innerHTML=GFR.map(([l],i)=>`<button class="pxhb" data-gf="${i}" type="button">${l}</button>`).join('');
+$('#scs').addEventListener('click',e=>{const b=e.target.closest('[data-sc]');if(b){setScenario(+b.dataset.sc);saveHome()}});
+$('#gfr').addEventListener('click',e=>{const b=e.target.closest('[data-gf]');if(b)gFrame(+b.dataset.gf)});
+document.querySelectorAll('[data-flow]').forEach(b=>b.onclick=()=>gFlow(b.dataset.flow));
+$('#gAway').onclick=()=>{if(S.sc!==3)setScenario(3);gLive();S.g.mode='idle';gAutoOff()};
+$('#gTab').onclick=()=>{if(S.sc!==3)setScenario(3);gLive();gStop();S.g.mode='tab';S.g.pose=null;camStop();render();say('Simulated: tab not active, camera stopped. Click “Turn off” or reset to continue.',3500)};
+$('#gSetup').onclick=()=>{setScenario(4);S.g.setup=false;S.g.on=false;wizOpen(0)};
+const seg=(id,get,set)=>{$(id).addEventListener('click',e=>{const b=e.target.closest('button');if(b){set(b.dataset.v);pocSync()}})};
+seg('#oTime',()=>S.time,v=>{S.time=v;render()});
+seg('#oVoice',()=>OPT.voice,v=>{OPT.voice=v});
+seg('#oCam',()=>OPT.cam,v=>{OPT.cam=v;if(v==='real'&&S.g.on)camStart();else camStop();render()});
+function pocSync(){
+  document.querySelectorAll('#scs [data-sc]').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.sc===S.sc));
+  document.querySelectorAll('#gfr [data-gf]').forEach(b=>b.setAttribute('aria-pressed',S.sc===3&&S.g.frozen&&+b.dataset.gf===S.gf));
+  $('#hint').innerHTML=SC[S.sc-1][2];
+  [['#oTime',S.time],['#oVoice',OPT.voice],['#oCam',OPT.cam]].forEach(([id,v])=>document.querySelectorAll(id+' button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===v)));
+}
+$('#btnReset').onclick=()=>setScenario(S.sc);
+$('#btnAll').onclick=()=>{try{['ax24-state','ax24-task','ax24-result','ax22-home'].forEach(k=>localStorage.removeItem(k))}catch(e){};S.tipSeen=false;S.g.setup=false;S.g.on=false;S.g.map={peace:'voice',thumb:'na',point:'stock'};setScenario(1)};
+$('#bFs').onclick=()=>{document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen().catch(()=>{})};
+const togglePanel=o=>{const on=o??!$('#poc').classList.contains('on');$('#poc').classList.toggle('on',on);document.body.classList.toggle('ax-poc-on',on);$('#pocBtn').hidden=on;fit()};
+$('#pocBtn').onclick=()=>togglePanel(true);$('#pocX').onclick=()=>togglePanel(false);
+addEventListener('keydown',e=>{if(e.key==='`'&&!/input|textarea|select/i.test(e.target.tagName||'')){e.preventDefault();togglePanel()}});
+function fit(){if(document.body.classList.contains('shot'))return;
+  const pw=document.body.classList.contains('ax-poc-on')?$('#poc').offsetWidth:0;
+  const s=Math.min((innerWidth-pw-32)/1180,(innerHeight-32)/820,1.4);
+  $('#tab').style.transform=`scale(${s})`;
+}
+addEventListener('resize',fit);
+(function(){const q0=new URLSearchParams(location.search);if(q0.get('new')||q0.get('login')){try{localStorage.removeItem('ax24-state')}catch(e){}}
+  let st=null,res=null;try{st=JSON.parse(localStorage.getItem('ax24-state')||'null');res=JSON.parse(localStorage.getItem('ax24-result')||'null');localStorage.removeItem('ax24-result')}catch(e){}
+  if(st){setScenario(st.sc||2);Object.assign(S,{time:st.time||S.time,tipSeen:!!st.tipSeen,mode:st.mode||S.mode,queue:st.queue||S.queue,done:st.done||S.done,sub:st.sub||null,subUsed:st.subUsed||{}});
+    if(st.g){S.g.setup=st.g.setup;S.g.map=st.g.map||S.g.map;if(st.g.on&&S.mode==='tasks'){S.g.on=true;S.g.mode='idle'}}S.tip=false;
+    const ok=res&&res.key===taskKey(res.key.split(':').pop());
+    if(ok){if(S.sub==='result'||S.sub==='failed'){const idx=S.queue[0];S.sub=null;S.queue.shift();S.done.push(idx);S.last={idx,stamp:Date.now(),msg:list()[idx].done}}else complete()}
+    render();saveHome()}
+  else setScenario(q0.get('login')?2:1);
+  if(q0.get('new'))later(300,()=>say('Workspace ready. Welcome to GANES.'));
+  if(q0.get('new')||q0.get('login'))history.replaceState(null,'','index.html');
+  const q=new URLSearchParams(location.search);
+  if(q.get('menus')){S.menus=true;render()}
+  if(q.get('set')){S.view='settings';S.setTab=q.get('set');render()}
+  if(q.get('menus')||q.get('set'))history.replaceState(null,'','index.html');
+  togglePanel(false);
+  const sh=q.get('shot');if(sh&&SHOTS[sh])shotMode(sh)})();
+</script>
+</body>
+</html>
